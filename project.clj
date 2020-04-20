@@ -3,8 +3,10 @@
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
-                 [dda/dda-config-commons "0.1.0"]]
+  :dependencies [[org.clojure/clojure "1.10.1"]
+                 [orchestra "2018.12.06-2"]
+                 [selmer "1.12.23"]
+                 [dda/dda-config-commons "1.5.0"]]
   :source-paths ["main/src"]
   :resource-paths ["main/resources"]
   :repositories [["snapshots" :clojars]
