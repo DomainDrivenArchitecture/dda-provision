@@ -15,15 +15,16 @@
 ; limitations under the License.
 (ns dda.provision
     (:require
-     [clojure.tools.logging :as logging]
      [clojure.spec.alpha :as s]
      [clojure.spec.test.alpha :refer [instrument]]
-     [orchestra.core :refer [defn-spec]]
-     [selmer.parser :as selmer]))
+     [orchestra.core :refer [defn-spec]]))
 
 (s/def ::provisioner keyword?)
 (s/def ::user string?)
 (s/def ::module string?)
+(s/def ::sub-module string?)
+(s/def ::log-level #{::trace ::debug ::info ::warn ::error ::fatal})
+(s/def ::log-message string?)
 
 (s/def ::filename string?)
 (s/def ::config map?)
@@ -34,7 +35,7 @@
   [provisioner ::provisioner
    user ::user
    module ::module
-   sub-module ::module
+   sub-module ::sub-module
    files ::files]
   provisioner)
 (defmulti copy-resources-to-user select-copy-resources-to-user)
@@ -43,62 +44,38 @@
   [provisioner ::provisioner
    user ::user
    module ::module
-   sub-module ::module
+   sub-module ::sub-module
    filename ::filename]
   provisioner)
 (defmulti exec-as-user select-exec-as-user)
 
+(defn-spec select-copy-resources-to-tmp keyword?
+  [provisioner ::provisioner
+   module ::module
+   sub-module ::sub-module
+   files ::files]
+  provisioner)
+(defmulti copy-resources-to-tmp select-copy-resources-to-tmp)
 
-(s/fdef copy-resources-to-user
-  :args (s/cat :provisioner ::provisioner 
-               :user ::user 
-               :module ::module 
-               :sub-module ::module 
-               :files ::files))
-(defmethod copy-resources-to-user ::dry-run 
-  [provisioner user module sub-module files]
-  (clojure.string/join
-   "\n"
-   (into 
-    [(str "copies following files to /home/" user "/resource/" module "/" sub-module "/ :")]
-    files)))
+(defn-spec select-exec-as-root keyword?
+  [provisioner ::provisioner
+   module ::module
+   sub-module ::sub-module
+   filename ::filename]
+  provisioner)
+(defmulti exec-as-root select-exec-as-root)
 
-(s/fdef exec-as-user
-  :args (s/cat :provisioner ::provisioner
-               :user ::user
-               :module ::module
-               :sub-module ::module
-               :filename ::filename))
-(defmethod exec-as-user ::dry-run
-  [provisioner user module sub-module filename]
-  (str "execute /home/" user "/resource/" module "/" sub-module "/" filename))
-    
+(defn-spec select-provision-log keyword?
+  [provisioner ::provisioner
+   module ::module
+   log-level ::log-level
+   log-mesage ::log-message]
+  provisioner)
+(defmulti provision-log select-provision-log)
+
 
 (instrument `select-copy-resources-to-user)
-(instrument `copy-resources-to-user)
 (instrument `select-exec-as-user)
-(instrument `exec-as-user)
-
-
-;; (s/defn copy-resources-to-tmp
-;;   [facility :- s/Str
-;;    module :- s/Str
-;;    files :- [Resource]]
-;;   (copy-resources-to-path "root" (tmp-path facility) module files))
-
-;; (s/defn exec-as-root
-;;   [facility :- s/Str
-;;    module :- s/Str
-;;    filename :-  s/Str]
-;;   (let [facility-path (tmp-path (name facility))
-;;         module-path (str facility-path "/" module)]
-;;     (actions/exec-checked-script
-;;      (str "execute " module "/" filename)
-;;      ("cd" ~module-path)
-;;      ("bash" ~filename))))
-
-
-;; (s/defn log-info
-;;   [facility :- s/Str
-;;    log :- s/Str]
-;;   (actions/as-action (logging/info (str facility " - " log))))
+(instrument `select-copy-resources-to-tmp)
+(instrument `select-exec-as-root)
+(instrument `select-provision-log)

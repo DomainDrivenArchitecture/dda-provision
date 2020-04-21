@@ -1,0 +1,7 @@
+{:input {:dda.provision/provisioner :dda.provision.dry-run/dry-run
+         :dda.provision/user "user"
+         :dda.provision/module "module"
+         :dda.provision/sub-module "sub-module"
+         :dda.provision/files [{:dda.provision/filename "aFile"}]}
+ :expected "copy files:
+#:dda.provision.dry-run{:path \"/home/user/resource/module/sub-module/aFile\", :mod \"644\", :owner \"user\", :group \"user\", :content \"aFile\"}"}
