@@ -97,27 +97,33 @@
                :filename ::p/filename)
   :ret ::exec)
 
+(defmethod p/copy-resources-to-tmp ::dry-run
+  [provisioner module sub-module files]
+  (copy-resources-to-path "root" (str "/tmp/" module) sub-module files))
+(s/fdef p/copy-resources-to-tmp
+  :args (s/cat :provisioner ::p/provisioner
+               :module ::p/module
+               :sub-module ::p/sub-module
+               :files ::p/files)
+  :ret ::copies)
+
+(defmethod p/exec-as-root ::dry-run
+  [provisioner module sub-module filename]
+  {::execution-directory
+   (str "/tmp/" module "/" sub-module)
+   ::execution-user "root"
+   ::filename filename})
+(s/fdef p/exec-as-root
+  :args (s/cat :provisioner ::p/provisioner
+               :module ::p/module
+               :sub-module ::p/sub-module
+               :filename ::p/filename)
+  :ret ::exec)
 
 (instrument `p/copy-resources-to-user)
 (instrument `p/exec-as-user)
-
-
-;; (s/defn copy-resources-to-tmp
-;;   [facility :- s/Str
-;;    module :- s/Str
-;;    files :- [Resource]]
-;;   (copy-resources-to-path "root" (tmp-path facility) module files))
-
-;; (s/defn exec-as-root
-;;   [facility :- s/Str
-;;    module :- s/Str
-;;    filename :-  s/Str]
-;;   (let [facility-path (tmp-path (name facility))
-;;         module-path (str facility-path "/" module)]
-;;     (actions/exec-checked-script
-;;      (str "execute " module "/" filename)
-;;      ("cd" ~module-path)
-;;      ("bash" ~filename))))
+(instrument `p/copy-resources-to-tmp)
+(instrument `p/exec-as-root)
 
 
 ;; (s/defn log-info
