@@ -68,6 +68,7 @@
 (defn-spec select-provision-log keyword?
   [provisioner ::provisioner
    module ::module
+   sub-module ::sub-module
    log-level ::log-level
    log-mesage ::log-message]
   provisioner)

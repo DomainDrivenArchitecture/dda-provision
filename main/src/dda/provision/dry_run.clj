@@ -35,6 +35,8 @@
 (s/def ::execution-directory string?)
 (s/def ::exec (s/keys :req [::execution-directory ::execution-user ::filename]))
 
+(s/def ::log (s/keys :req [::p/module ::p/sub-module ::p/log-level ::p/log-message]))
+
 (defn-spec dry-print string?
   [copies ::copies]
   (clojure.string/join
@@ -120,10 +122,26 @@
                :filename ::p/filename)
   :ret ::exec)
 
+(defmethod p/provision-log ::dry-run
+  [provisioner module sub-module log-level log-message]
+  {::p/module module
+   ::p/sub-module sub-module
+   ::p/log-level log-level
+   ::p/log-message log-message})
+(s/fdef p/provision-log
+  :args (s/cat :provisioner ::p/provisioner
+               :module ::p/module
+               :sub-module ::p/log-level
+               :log-level ::p/log-level
+               :log-message ::p/log-message)
+  :ret ::log)
+
+
 (instrument `p/copy-resources-to-user)
 (instrument `p/exec-as-user)
 (instrument `p/copy-resources-to-tmp)
 (instrument `p/exec-as-root)
+(instrument `p/provision-log)
 
 
 ;; (s/defn log-info
