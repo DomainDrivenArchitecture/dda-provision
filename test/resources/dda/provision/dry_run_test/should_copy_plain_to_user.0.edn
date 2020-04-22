@@ -1,10 +1,11 @@
 {:input {:dda.provision/provisioner :dda.provision.dry-run/dry-run
          :dda.provision/user "user"
-         :dda.provision/module "module"
-         :dda.provision/sub-module "sub-module"
+         :dda.provision/module "dda-provision"
+         :dda.provision/sub-module "should-copy-plain"
          :dda.provision/files [{:dda.provision/filename "aFile"}]}
- :expected [{:dda.provision.dry-run/path "/home/user/resource/module/sub-module/aFile"
-             :dda.provision.dry-run/mod "644"
+ :expected [{:dda.provision.dry-run/path 
+             "/home/user/resources/dda-provision/should-copy-plain/aFile"
+             :dda.provision.dry-run/mode "600"
              :dda.provision.dry-run/owner "user"
              :dda.provision.dry-run/group "user"
              :dda.provision.dry-run/content "aFile"}]}

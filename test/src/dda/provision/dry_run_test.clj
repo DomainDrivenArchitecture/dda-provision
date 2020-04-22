@@ -16,9 +16,12 @@
 (ns dda.provision.dry-run-test
   (:require
    [clojure.test :refer :all]
+   [clojure.spec.test.alpha :refer [instrument]]
    [data-test :refer :all]
    [dda.provision :as sut]
    [dda.provision.dry-run :as load-required]))
+
+(instrument)
 
 (defdatatest should-print-plain [input expected]
   (is (= expected

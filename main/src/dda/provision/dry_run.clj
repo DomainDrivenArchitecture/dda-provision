@@ -15,6 +15,7 @@
 ; limitations under the License.
 (ns dda.provision.dry-run
     (:require
+     [clojure.string :as string]
      [clojure.spec.alpha :as s]
      [clojure.spec.test.alpha :refer [instrument]]
      [orchestra.core :refer [defn-spec]]
@@ -22,11 +23,11 @@
      [selmer.parser :as selmer]))
 
 (s/def ::path string?)
-(s/def ::mod string?)
+(s/def ::mode string?)
 (s/def ::owner string?)
 (s/def ::group string?)
 (s/def ::content string?)
-(s/def ::copy (s/keys :req [::path ::mod ::owner ::group ::content]))
+(s/def ::copy (s/keys :req [::path ::mode ::owner ::group ::content]))
 (s/def ::copies (s/coll-of ::copy))
 
 (defn-spec dry-print string?
@@ -37,6 +38,34 @@
     ["copy files:"]
     (map str copies))))
 
+(defn-spec
+  ^{:private true}
+  copy-resources-to-path ::copies
+  [user :dda.provision/user
+   module-path string?
+   sub-module :dda.provision/sub-module
+   files :dda.provision/files]
+  (let [base-path (str module-path "/" sub-module)]
+    (map (fn [resource]
+           (let [template? (contains? resource :dda.provision/config)
+                 filename (:dda.provision/filename resource)
+                 filename-on-target (str base-path "/" filename)
+                 filename-on-source (if template?
+                                      (str sub-module "/" filename ".template")
+                                      (str sub-module "/" filename))
+                 config (if template?
+                          (:dda.provision/config resource)
+                          {})
+                 mode (cond
+                        (contains? resource :dda.provision/mode) (:dda.provision/mode resource)
+                        (string/ends-with? filename ".sh") "700"
+                        :dda.provision/default "600")]
+             {::path filename-on-target
+              ::group user
+              ::owner user
+              ::mode mode
+              ::content (selmer/render-file filename-on-source config)}))
+         files)))
 
 (s/fdef copy-resources-to-user
   :args (s/cat :provisioner :p/provisioner 
@@ -47,11 +76,7 @@
     :ret ::copies)
 (defmethod p/copy-resources-to-user ::dry-run 
   [provisioner user module sub-module files]
-  [{:dda.provision.dry-run/path "/home/user/resource/module/sub-module/aFile"
-    :dda.provision.dry-run/mod "644"
-    :dda.provision.dry-run/owner "user"
-    :dda.provision.dry-run/group "user"
-    :dda.provision.dry-run/content "aFile"}])
+  (copy-resources-to-path user (str "/home/" user "/resources/" module) sub-module files))
 
 (s/fdef exec-as-user
   :args (s/cat :provisioner :p/provisioner
