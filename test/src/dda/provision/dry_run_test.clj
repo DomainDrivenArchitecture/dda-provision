@@ -40,3 +40,11 @@
                                      (::sut/sub-module input)
                                      (::sut/files input)))))
 
+(defdatatest should-execute-for-user [input expected]
+  (is (= expected
+         (sut/exec-as-user (::sut/provisioner input)
+                           (::sut/user input)
+                           (::sut/module input)
+                           (::sut/sub-module input)
+                           (::sut/filename input)))))
+

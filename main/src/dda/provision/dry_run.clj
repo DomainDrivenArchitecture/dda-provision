@@ -30,6 +30,11 @@
 (s/def ::copy (s/keys :req [::path ::mode ::owner ::group ::content]))
 (s/def ::copies (s/coll-of ::copy))
 
+(s/def ::filename string?)
+(s/def ::execution-user string?)
+(s/def ::execution-directory string?)
+(s/def ::exec (s/keys :req [::execution-directory ::execution-user ::filename]))
+
 (defn-spec dry-print string?
   [copies ::copies]
   (clojure.string/join
@@ -67,29 +72,33 @@
               ::content (selmer/render-file filename-on-source config)}))
          files)))
 
-(s/fdef copy-resources-to-user
-  :args (s/cat :provisioner :p/provisioner 
-               :user :p/user 
-               :module :p/module 
-               :sub-module :p/sub-module 
-               :files :p/files)
-    :ret ::copies)
 (defmethod p/copy-resources-to-user ::dry-run 
   [provisioner user module sub-module files]
   (copy-resources-to-path user (str "/home/" user "/resources/" module) sub-module files))
+(s/fdef p/copy-resources-to-user
+  :args (s/cat :provisioner ::p/provisioner
+               :user ::p/user
+               :module ::p/module
+               :sub-module ::p/sub-module
+               :files ::p/files)
+  :ret ::copies)
 
-(s/fdef exec-as-user
-  :args (s/cat :provisioner :p/provisioner
-               :user :p/user
-               :module :p/module
-               :sub-module :p/sub-module
-               :filename :p/filename))
 (defmethod p/exec-as-user ::dry-run
   [provisioner user module sub-module filename]
-  (str "execute /home/" user "/resource/" module "/" sub-module "/" filename))
-    
+  {::execution-directory
+   (str "/home/" user "/resources/" module "/" sub-module)
+   ::execution-user user
+   ::filename filename})
+(s/fdef p/exec-as-user
+  :args (s/cat :provisioner ::p/provisioner
+               :user ::p/user
+               :module ::p/module
+               :sub-module ::p/sub-module
+               :filename ::p/filename)
+  :ret ::exec)
 
-(instrument `p/select-exec-as-user)
+
+(instrument `p/copy-resources-to-user)
 (instrument `p/exec-as-user)
 
 
