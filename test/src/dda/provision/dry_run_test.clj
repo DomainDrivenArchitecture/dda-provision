@@ -26,16 +26,16 @@
 (defdatatest should-print-plain [input expected]
   (is (= expected
          (load-required/dry-print
-          (sut/copy-resources-to-user (:dda.provision/provisioner input)
-                                      (:dda.provision/user input)
-                                      (:dda.provision/module input)
-                                      (:dda.provision/sub-module input)
-                                      (:dda.provision/files input))))))
+          (sut/copy-resources-to-user (::sut/provisioner input)
+                                      (::sut/user input)
+                                      (::sut/module input)
+                                      (::sut/sub-module input)
+                                      (::sut/files input))))))
 
 (defdatatest should-copy-plain-to-user [input expected]
   (is (= expected
-         (sut/copy-resources-to-user (:dda.provision/provisioner input)
-                                     (:dda.provision/user input)
-                                     (:dda.provision/module input)
-                                     (:dda.provision/sub-module input)
-                                     (:dda.provision/files input)))))
+         (sut/copy-resources-to-user (::sut/provisioner input)
+                                     (::sut/user input)
+                                     (::sut/module input)
+                                     (::sut/sub-module input)
+                                     (::sut/files input)))))

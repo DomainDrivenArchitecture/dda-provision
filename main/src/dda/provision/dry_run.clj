@@ -41,25 +41,25 @@
 (defn-spec
   ^{:private true}
   copy-resources-to-path ::copies
-  [user :dda.provision/user
+  [user ::p/user
    module-path string?
-   sub-module :dda.provision/sub-module
-   files :dda.provision/files]
+   sub-module ::p/sub-module
+   files ::p/files]
   (let [base-path (str module-path "/" sub-module)]
     (map (fn [resource]
-           (let [template? (contains? resource :dda.provision/config)
-                 filename (:dda.provision/filename resource)
+           (let [template? (contains? resource ::p/config)
+                 filename (::p/filename resource)
                  filename-on-target (str base-path "/" filename)
                  filename-on-source (if template?
                                       (str sub-module "/" filename ".template")
                                       (str sub-module "/" filename))
                  config (if template?
-                          (:dda.provision/config resource)
+                          (::p/config resource)
                           {})
                  mode (cond
-                        (contains? resource :dda.provision/mode) (:dda.provision/mode resource)
+                        (contains? resource ::p/mode) (::p/mode resource)
                         (string/ends-with? filename ".sh") "700"
-                        :dda.provision/default "600")]
+                        ::p/default "600")]
              {::path filename-on-target
               ::group user
               ::owner user
