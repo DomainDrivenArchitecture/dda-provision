@@ -1,0 +1,12 @@
+{:meta {:name "test modes"}
+ :input {:dda.provision/provisioner :dda.provision.dry-run/dry-run
+         :dda.provision/user "user"
+         :dda.provision/module "dda-provision"
+         :dda.provision/sub-module "should-copy"
+         :dda.provision/files [{:dda.provision/filename "aFile.sh"}]}
+ :expected [{:dda.provision.dry-run/path 
+             "/home/user/resources/dda-provision/should-copy/aFile.sh"
+             :dda.provision.dry-run/mode "700"
+             :dda.provision.dry-run/owner "user"
+             :dda.provision.dry-run/group "user"
+             :dda.provision.dry-run/content "aFile"}]}
