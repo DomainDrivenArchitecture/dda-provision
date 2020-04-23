@@ -142,9 +142,3 @@
 (instrument `p/copy-resources-to-tmp)
 (instrument `p/exec-as-root)
 (instrument `p/provision-log)
-
-
-;; (s/defn log-info
-;;   [facility :- s/Str
-;;    log :- s/Str]
-;;   (actions/as-action (logging/info (str facility " - " log))))
