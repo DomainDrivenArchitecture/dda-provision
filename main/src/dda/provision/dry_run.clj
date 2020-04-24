@@ -66,7 +66,7 @@
                  mode (cond
                         (contains? resource ::p/mode) (::p/mode resource)
                         (string/ends-with? filename ".sh") "700"
-                        ::p/default "600")]
+                        :default "600")]
              {::path filename-on-target
               ::group user
               ::owner user
