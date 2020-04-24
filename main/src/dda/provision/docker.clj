@@ -101,6 +101,18 @@
     (sh (str "sudo docker rm -f " container))))
 
 
+(defn escapeNewline [text]
+  (string/replace text "\n" "\\n"))
+
+
+(defn escapeDoubleQuote [text]
+  (string/replace text "\"" "\\\""))
+
+
+(defn escapeSingleQuote [text]
+  (string/replace text "'" "\\'"))
+
+
 (defn provideContainer [container & [image option]]
   (let [container (or container dockerDefaultContainer)
         image (or dockerImage)
@@ -120,12 +132,17 @@
   "executes a shell command cmd in a running docker container"
   [container cmd & [user]]
   ;todo as user
-  (sh (str "sudo docker exec " container " " dockerShell " -c \"" (string/replace (string/replace cmd "\\" "\\\\") "\"" "\\\"") "\"")))
+  (sh (str "sudo docker exec " container " " dockerShell " -c '" (escapeSingleQuote cmd) "'")))
 
 
 (defn dockerCopyFileToContainer
   [src-file container destination-path]
   (sh (str "sudo docker cp " src-file " " container ":" destination-path)))
+
+
+(defn dockerCreateFileInContainer
+  [container file text]
+  (dockerExec container (str "printf \"" (escapeDoubleQuote text) "\" > " file)))
 
 
 (defn dockerChmodFile
@@ -171,19 +188,22 @@
                  mode (cond
                         (contains? resource ::p/mode) (::p/mode resource)
                         (string/ends-with? filename ".sh") "700"
-                        ::p/default "600")]
+                        ::p/default "600")
+                 content (selmer/render-file filename-on-source config)]
              (do
-               (dockerCopyFileToContainer filename dockerDefaultContainer base-path)
-               (dockerExec dockerDefaultContainer "mkdir -p " base-path)
+               ;(dockerCopyFileToContainer filename dockerDefaultContainer base-path)
+               (pp/pprint (str " xxxxxxxxxxxxxxxxxxx " resource))
+               (pp/pprint (str " xxxxxxxxxxxxxxxxxxx " module-path " - " base-path " - " user " - " filename-on-source " - " filename-on-target " - " content))
+               (dockerExec dockerDefaultContainer (str "mkdir -p " base-path))
+               (dockerCreateFileInContainer dockerDefaultContainer filename-on-target content)
                (dockerChmodFile dockerDefaultContainer filename-on-target mode)
                (dockerChownFile dockerDefaultContainer filename-on-target user)
-               (dockerChgrpFile dockerDefaultContainer filename-on-target user)
              ;{::path filename-on-target
              ; ::group user
              ; ::owner user
              ; ::mode mode
-             ; ::content (selmer/render-file filename-on-source config)
-               (pp/pprint (str " xxxxxxxxxxxxxxxxxxx" user " - " filename-on-source " - " filename-on-target)))))
+             ; content (selmer/render-file filename-on-source config)
+               (dockerChgrpFile dockerDefaultContainer filename-on-target user))))
          files)))
 
 (defmethod p/copy-resources-to-user ::docker
@@ -272,3 +292,8 @@
 
 
 (defn a [] pp/pprint "ggggggggggggggggggggggggggggggggggggggg")
+
+(defn tstme []
+  (selmer.parser/set-resource-path! "/home/az/repo/dda/dda-provision/main/src/dda/")
+  (dda.provision/copy-resources-to-user ::docker "testuser" "modu" "provision" [{::p/filename "aFile.sh"}])
+  (dda.provision/exec-as-user ::docker "testuser" "modu" "provision" "aFile.sh"))
