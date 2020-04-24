@@ -82,7 +82,8 @@
 
 ; ----------------- docker stuff
 (def dockerImage "ubuntu_plus_user")
-(def defaultContainer "cljdock")
+(def dockerDefaultContainer "dockjr")
+(def dockerShell "sh")
 
 
 (defn isRunning [container]
@@ -101,7 +102,7 @@
 
 
 (defn provideContainer [container & [image option]]
-  (let [container (or container defaultContainer)
+  (let [container (or container dockerDefaultContainer)
         image (or dockerImage)
         option (or option :use-existing-else-create)]
     (if (= option :create-new-kill-existing)
@@ -117,15 +118,27 @@
 
 (defn dockerExec
   "executes a shell command cmd in a running docker container"
-  [container cmd]
-  (sh (str "sudo docker exec " container " sh -c \"" (string/replace (string/replace cmd "\\" "\\\\") "\"" "\\\"") "\"")))
+  [container cmd & [user]]
+  ;todo as user
+  (sh (str "sudo docker exec " container " " dockerShell " -c \"" (string/replace (string/replace cmd "\\" "\\\\") "\"" "\\\"") "\"")))
 
 
 (defn dockerCopyFileToContainer
-  "executes a shell command cmd in a running docker container"
   [src-file container destination-path]
   (sh (str "sudo docker cp " src-file " " container ":" destination-path)))
 
+
+(defn dockerChmodFile
+  [container file mode]
+  (dockerExec container (str "chmod " mode " " file)))
+
+(defn dockerChownFile
+  [container file owner]
+  (dockerExec container (str "chown " owner " " file)))
+
+(defn dockerChgrpFile
+  [container file group]
+  (dockerExec container (str "chgrp " group " " file)))
 
 
 ; ******************************************
@@ -159,12 +172,18 @@
                         (contains? resource ::p/mode) (::p/mode resource)
                         (string/ends-with? filename ".sh") "700"
                         ::p/default "600")]
-             {::path filename-on-target
-              ::group user
-              ::owner user
-              ::mode mode
-              ::content (selmer/render-file filename-on-source config)}
-             (pp/pprint (str " xxxxxxxxxxxxxxxxxxx" user))))
+             (do
+               (dockerCopyFileToContainer filename dockerDefaultContainer base-path)
+               (dockerExec dockerDefaultContainer "mkdir -p " base-path)
+               (dockerChmodFile dockerDefaultContainer filename-on-target mode)
+               (dockerChownFile dockerDefaultContainer filename-on-target user)
+               (dockerChgrpFile dockerDefaultContainer filename-on-target user)
+             ;{::path filename-on-target
+             ; ::group user
+             ; ::owner user
+             ; ::mode mode
+             ; ::content (selmer/render-file filename-on-source config)
+               (pp/pprint (str " xxxxxxxxxxxxxxxxxxx" user " - " filename-on-source " - " filename-on-target)))))
          files)))
 
 (defmethod p/copy-resources-to-user ::docker
@@ -182,10 +201,15 @@
 
 (defmethod p/exec-as-user ::docker
   [provisioner user module sub-module filename]
-  {::execution-directory
-   (str "/home/" user "/resources/" module "/" sub-module)
-   ::execution-user user
-   ::filename filename})
+  (let [execution-directory (str "/home/" user "/resources/" module "/" sub-module)]
+    (dockerExec dockerDefaultContainer (str "cd " execution-directory " && ./" filename))))
+;
+;{::execution-directory
+; (str "/home/" user "/resources/" module "/" sub-module)
+; ::execution-user user
+; ::filename filename
+;  (pp/pprint (str "dir " ::execution-directory))}
+
 (s/fdef p/exec-as-user
   :args (s/cat :provisioner ::p/provisioner
                :user ::p/user
@@ -193,6 +217,7 @@
                :sub-module ::p/sub-module
                :filename ::p/filename)
   :ret ::exec)
+
 
 (defmethod p/copy-resources-to-tmp ::docker
   [provisioner module sub-module files]
@@ -204,18 +229,25 @@
                :files ::p/files)
   :ret ::copies)
 
+
 (defmethod p/exec-as-root ::docker
   [provisioner module sub-module filename]
-  {::execution-directory
-   (str "/tmp/" module "/" sub-module)
-   ::execution-user "root"
-   ::filename filename})
+  (let [execution-directory (str "/tmp/" module "/" sub-module)]
+    (p/exec-as-user ::docker "root" module sub-module filename)))
+
+;(defmethod p/exec-as-root ::docker
+;  [provisioner module sub-module filename]
+;  {::execution-directory
+;   (str "/tmp/" module "/" sub-module)
+;   ::execution-user "root"
+;   ::filename filename})
 (s/fdef p/exec-as-root
   :args (s/cat :provisioner ::p/provisioner
                :module ::p/module
                :sub-module ::p/sub-module
                :filename ::p/filename)
   :ret ::exec)
+
 
 (defmethod p/provision-log ::docker
   [provisioner module sub-module log-level log-message]
@@ -238,10 +270,5 @@
 (instrument `p/exec-as-root)
 (instrument `p/provision-log)
 
-
-;; (s/defn log-info
-;;   [facility :- s/Str
-;;    log :- s/Str]
-;;   (actions/as-action (logging/info (str facility " - " log))))
 
 (defn a [] pp/pprint "ggggggggggggggggggggggggggggggggggggggg")
