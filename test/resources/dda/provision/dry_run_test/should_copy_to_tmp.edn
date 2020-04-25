@@ -3,9 +3,9 @@
          :dda.provision/module "dda-provision"
          :dda.provision/sub-module "should-copy"
          :dda.provision/files [{:dda.provision/filename "aFile"}]}
- :expected [{:dda.provision.dry-run/path 
-             "/tmp/dda-provision/should-copy/aFile"
-             :dda.provision.dry-run/mode "600"
-             :dda.provision.dry-run/owner "root"
-             :dda.provision.dry-run/group "root"
-             :dda.provision.dry-run/content "aFile"}]}
+ :expected [#:dda.provision.dry-run
+             {:path "/tmp/dda-provision/should-copy/aFile"
+              :mode "600"
+              :owner "root"
+              :group "root"
+              :content "aFile"}]}
