@@ -51,9 +51,9 @@
 (defdatatest should-copy-to-tmp [input expected]
   (is (= expected
          (sut/copy-resources-to-tmp (::sut/provisioner input)
-                                     (::sut/module input)
-                                     (::sut/sub-module input)
-                                     (::sut/files input)))))
+                                    (::sut/module input)
+                                    (::sut/sub-module input)
+                                    (::sut/files input)))))
 
 (defdatatest should-execute-for-root [input expected]
   (is (= expected

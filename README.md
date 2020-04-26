@@ -4,9 +4,9 @@
 
 [![Slack](https://img.shields.io/badge/chat-clojurians-green.svg?style=flat)](https://clojurians.slack.com/messages/#dda-pallet/) | [<img src="https://meissa-gmbh.de/img/community/Mastodon_Logotype.svg" width=20 alt="team@social.meissa-gmbh.de"> team@social.meissa-gmbh.de](https://social.meissa-gmbh.de/@team) | [Website & Blog](https://domaindrivenarchitecture.org)
 
-## Compatability
+## Compatibility
 
-dda-provision is compatible to the following versions
+dda-provision is compatible with the following versions
  * clojure 1.9
 
 ## Purpose

@@ -49,6 +49,15 @@
   provisioner)
 (defmulti exec-as-user select-exec-as-user)
 
+(defn-spec select-exec-script keyword?
+  [provisioner ::provisioner
+   user ::user
+   module ::module
+   sub-module ::sub-module
+   filename ::filename]
+  provisioner)
+(defmulti exec-script select-exec-script)
+
 (defn-spec select-copy-resources-to-tmp keyword?
   [provisioner ::provisioner
    module ::module
@@ -77,6 +86,7 @@
 
 (instrument `select-copy-resources-to-user)
 (instrument `select-exec-as-user)
+(instrument `select-exec-script)
 (instrument `select-copy-resources-to-tmp)
 (instrument `select-exec-as-root)
 (instrument `select-provision-log)
