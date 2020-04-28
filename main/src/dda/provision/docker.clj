@@ -101,7 +101,7 @@
 ; ----------------- docker stuff
 (def default-container "dockjr")
 (def default-shell "sh")
-(def default-image "ubuntu-with-user")
+(def default-image "ubuntu_with_user")
 
 (def image-initialized? (atom false))
 (def default-container-initialized? (atom false))
@@ -253,6 +253,7 @@
 (defmethod p/exec-script ::docker
   [provisioner user module sub-module filename]
   (let [file-with-path (str sub-module "/" filename)]
+    (provide-container default-container)
     (docker-exec-host-script default-container (slurp (.getFile (clojure.java.io/resource file-with-path))))))
 
 (s/fdef p/exec-script
