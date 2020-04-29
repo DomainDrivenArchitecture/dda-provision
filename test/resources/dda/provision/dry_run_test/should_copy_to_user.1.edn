@@ -4,9 +4,10 @@
          :dda.provision/module "dda-provision"
          :dda.provision/sub-module "should-copy"
          :dda.provision/files [{:dda.provision/filename "aFile.sh"}]}
- :expected [{:dda.provision.dry-run/path 
+ :expected [#:dda.provision.dry-run
+            {:path
              "/home/user/resources/dda-provision/should-copy/aFile.sh"
-             :dda.provision.dry-run/mode "700"
-             :dda.provision.dry-run/owner "user"
-             :dda.provision.dry-run/group "user"
-             :dda.provision.dry-run/content "#!/bin/bash -v\necho \"echo from aFile.sh\"\n# cmts\necho \"again!\"\n"}]}
+             :mode "700"
+             :owner "user"
+             :group "user"
+             :content "aFile"}]}

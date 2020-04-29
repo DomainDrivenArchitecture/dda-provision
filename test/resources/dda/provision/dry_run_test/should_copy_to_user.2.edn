@@ -5,7 +5,8 @@
          :dda.provision/sub-module "should-copy"
          :dda.provision/files [{:dda.provision/filename "file-with-template.sh" 
                                 :dda.provision/config {:a-key "a-value"}}]}
- :expected [{:dda.provision.dry-run/path 
+ :expected [#:dda.provision.dry-run
+            {:dda.provision.dry-run/path
              "/home/user/resources/dda-provision/should-copy/file-with-template.sh"
              :dda.provision.dry-run/mode "700"
              :dda.provision.dry-run/owner "user"
