@@ -9,4 +9,4 @@
              :dda.provision.dry-run/mode "700"
              :dda.provision.dry-run/owner "user"
              :dda.provision.dry-run/group "user"
-             :dda.provision.dry-run/content "aFile"}]}
+             :dda.provision.dry-run/content "#!/bin/bash -v\necho \"echo from aFile.sh\"\n# cmts\necho \"again!\"\n"}]}
