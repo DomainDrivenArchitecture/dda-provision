@@ -41,7 +41,7 @@
 (s/def ::log (s/keys :req [::p/module ::p/sub-module ::p/log-level ::p/log-message]))
 
 
-; ----------------- shell stuff
+; ----------------- local shell support
 (defn escape-double-quote [text]
   (string/replace text "\"" "\\\""))
 
@@ -71,13 +71,13 @@
 
 
 (defn sh
-  "runs shell command cmd locally, returning true or false for success resp. failure"
+  "runs shell command locally, returning true or false for success resp. failure"
   [command]
   (= 0 (:exit (sh-result command))))
 
 
 (defn split-script
-  "splits a sh script in a set of sh command"
+  "splits a shell script in a list of shell commands"
   [script]
   (filter (fn [x] (and (not= "" x) (not (string/starts-with? x "#"))))
           (map (fn [x] (string/trim x))
@@ -85,6 +85,7 @@
 
 
 (defn sh-multi-lines [script]
+  "executes a list of shell commands, returns true if all completed successfully"
   (if (not (empty? script))
     (and
       (sh (first script))
@@ -99,19 +100,21 @@
 
 
 ; ----------------- docker stuff
-(def default-container "dockjr")
+(def default-container "dda-provision-tests")
 (def default-shell "sh")
 (def default-image "ubuntu_with_user")
 
 (def image-initialized? (atom false))
-(def default-container-initialized? (atom false))
+
 
 (defn image-exists? [imageName]
   (not= "" (:out (sh-result (str "sudo docker images " imageName " -q")))))
 
+
 (defn build-image [name path]
   (if (not (image-exists? name))
     (sh (str "cd " path " && sudo docker build --tag " name " ."))))
+
 
 (defn provide-image [image]
   (if (not @image-initialized?)
@@ -162,9 +165,10 @@
 (defn docker-exec-host-script
   [container script & [user]]
   (let [commands (split-script script)]
-    (map (fn [command]
-           (docker-exec container command user))
-      commands)))
+    (reduce (fn [x y] (and x y))
+      (map (fn [command]
+             (docker-exec container command user))
+        commands))))
 
 
 (defn docker-copy-file-to-container
@@ -192,7 +196,7 @@
   (docker-exec container (str "chgrp " group " " file) user))
 
 
-; ******************************************
+; ************************* methods for dda-provision ::docker
 (defn-spec
   ^{:private true}
   copy-resources-to-path ::copies
@@ -224,6 +228,7 @@
                (docker-chgrp-file default-container filename-on-target user user))))
          files)))
 
+
 (defmethod p/copy-resources-to-user ::docker
   [provisioner user module sub-module files]
   (copy-resources-to-path user (str "/home/" user "/resources/" module) sub-module files))
@@ -240,7 +245,6 @@
   [provisioner user module sub-module filename]
   (let [execution-directory (str "/home/" user "/resources/" module "/" sub-module)]
     (docker-exec default-container (str "cd " execution-directory " && ./" filename))))
-
 (s/fdef p/exec-as-user
   :args (s/cat :provisioner ::p/provisioner
                :user ::p/user
@@ -255,7 +259,6 @@
   (let [file-with-path (str sub-module "/" filename)]
     (provide-container default-container)
     (docker-exec-host-script default-container (slurp (.getFile (clojure.java.io/resource file-with-path))))))
-
 (s/fdef p/exec-script
   :args (s/cat :provisioner ::p/provisioner
                :user ::p/user
@@ -268,7 +271,6 @@
 (defmethod p/copy-resources-to-tmp ::docker
   [provisioner module sub-module files]
   (copy-resources-to-path "root" (str "/tmp/" module) sub-module files))
-
 (s/fdef p/copy-resources-to-tmp
   :args (s/cat :provisioner ::p/provisioner
                :module ::p/module
@@ -281,8 +283,6 @@
   [provisioner module sub-module filename]
   (let [execution-directory (str "/tmp/" module "/" sub-module)]
     (docker-exec default-container (str "cd " execution-directory " && ./" filename) "root")))
-
-
 (s/fdef p/exec-as-root
   :args (s/cat :provisioner ::p/provisioner
                :module ::p/module
@@ -305,15 +305,12 @@
                :log-message ::p/log-message)
   :ret ::log)
 
+(defn dummy []
+  true)
 
 (instrument `p/copy-resources-to-user)
 (instrument `p/exec-as-user)
+(instrument `p/exec-script)
 (instrument `p/copy-resources-to-tmp)
 (instrument `p/exec-as-root)
 (instrument `p/provision-log)
-
-
-; -------------------------------------
-(defn demo []
-  (do
-    (dda.provision/exec-script ::docker "testuser" "modu" "should-copy" "aFile.sh")))
