@@ -24,15 +24,31 @@
 (instrument)
 
 
+(def testscript
+  "
+  pwd
+  echo 'Hello'
+  ls
+  ")
+
 (defn test-exec-script []
   (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
   (is (= true
-         (sut/exec-script ::sut2/docker "testuser"
-                          "
-                           pwd
-                           echo 'Hello'
-                           ls
-                           "))))
+         (sut/exec-script ::sut2/docker "testuser" testscript))))
+
+
+(def failing-testscript
+  "
+  pwd
+  ech 'Hello'
+  ls
+  ")
+
+(defn test-exec-script-failing []
+  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (is (= false
+         (sut/exec-script ::sut2/docker "testuser" failing-testscript))))
+
 
 
 (defn test-exec-script-file []
@@ -62,6 +78,7 @@
 (defn testAll []
   (and
     (test-exec-script)
+    (test-exec-script-failing)
     (test-exec-script-file)
     (test-copy-resources-to-user-and-exec-as-user)
     (test-copy-resources-to-tmp-and-exec-as-root)))
