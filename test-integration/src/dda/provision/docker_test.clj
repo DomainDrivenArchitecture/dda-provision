@@ -27,7 +27,12 @@
 (defn test-exec-script []
   (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
   (is (= true
-         (sut/exec-script ::sut2/docker "testuser" "pwd\necho 'Hello'\nls"))))
+         (sut/exec-script ::sut2/docker "testuser"
+                          "
+                           pwd
+                           echo 'Hello'
+                           ls
+                           "))))
 
 
 (defn test-exec-script-file []

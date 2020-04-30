@@ -109,6 +109,16 @@
                :files ::p/files)
   :ret ::copies)
 
+(defmethod p/exec-script ::dry-run
+  [provisioner user content]
+  {::execution-user user
+   ::content content})
+(s/fdef p/exec-script-file
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :content ::p/script-content)
+        :ret ::exec)
+
 (defmethod p/exec-script-file ::dry-run
   [provisioner user module sub-module filename]
   {::execution-directory

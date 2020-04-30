@@ -1,10 +1,6 @@
 {:meta {:name "a plain data file test"}
  :input {:dda.provision/provisioner :dda.provision.dry-run/dry-run
          :dda.provision/user "user"
-         :dda.provision/module "dda-provision"
-         :dda.provision/sub-module "should-execute"
-         :dda.provision/filename "aFile"}
- :expected {:dda.provision.dry-run/execution-directory
-            "/home/user/resources/dda-provision/should-execute"
-            :dda.provision.dry-run/execution-user "user"
-            :dda.provision.dry-run/filename "aFile"}}
+         :dda.provision/content "echo hi"}
+ :expected {:dda.provision.dry-run/execution-user "user"
+            :dda.provision.dry-run/content "echo hi"}}
