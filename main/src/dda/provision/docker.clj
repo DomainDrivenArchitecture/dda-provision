@@ -18,11 +18,12 @@
      [clojure.string :as string]
      [clojure.spec.alpha :as s]
      [clojure.spec.test.alpha :refer [instrument]]
+     [clojure.tools.logging :as log]
+     [clojure.java.shell :as shell]
      [orchestra.core :refer [defn-spec]]
      [dda.provision :as p]
-     [selmer.parser :as selmer]
-     [clojure.java.shell :as shell]
-     [clojure.pprint :as pp]))
+     [selmer.parser :as selmer]))
+
 
 
 ; ------------------ docker settings
@@ -71,9 +72,9 @@
   "runs shell command locally, returning result vector"
   [command]
   (do
-    (pp/pprint (str "------------------------------- CMD : " command " --------------------------------"))
+    (log/info (str "-------------------- CMD : " (escape-newline command) " -------------------"))
     (let [result (shell/sh "sh" "-c" command)]
-      (pp/pprint (format-result result))
+      (log/info (format-result result))
       result)))
 
 
