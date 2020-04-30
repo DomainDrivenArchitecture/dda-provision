@@ -26,3 +26,13 @@
 (defn test_exec_script []
   (is (= true
         (sut/exec-script ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh"))))
+
+
+(defn test_copy-resources-to-user []
+  (is (= [true]
+        (sut/copy-resources-to-user ::sut2/docker "testuser" "modu" "should-copy" [{::sut/filename "aFile"}]))))
+
+
+(defn testAll []
+  (test_exec_script)
+  (test_copy-resources-to-user))

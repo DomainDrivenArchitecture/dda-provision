@@ -305,8 +305,6 @@
                :log-message ::p/log-message)
   :ret ::log)
 
-(defn dummy []
-  true)
 
 (instrument `p/copy-resources-to-user)
 (instrument `p/exec-as-user)
