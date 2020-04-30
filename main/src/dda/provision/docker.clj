@@ -25,6 +25,13 @@
      [clojure.pprint :as pp]))
 
 
+; ------------------ docker settings
+(def default-container "dda-provision-tests")
+(def default-shell "sh")
+(def default-image "ubuntu_with_user")
+
+
+; ---------------- types
 (s/def ::path string?)
 (s/def ::mode string?)
 (s/def ::owner string?)
@@ -99,11 +106,7 @@
   (sh-multi-lines (split-script script)))
 
 
-; ----------------- docker stuff
-(def default-container "dda-provision-tests")
-(def default-shell "sh")
-(def default-image "ubuntu_with_user")
-
+; ----------------- docker support
 (def image-initialized? (atom false))
 
 
@@ -178,7 +181,7 @@
 
 (defn docker-create-file-in-container
   [container file text & [user]]
-  (docker-exec container (str "printf \"" (escape-double-quote text) "\" > " file) user))
+  (docker-exec container (str "printf \"" text "\" > " file) user))
 
 
 (defn docker-chmod-file
@@ -205,28 +208,29 @@
    sub-module ::p/sub-module
    files ::p/files]
   (let [base-path (str module-path "/" sub-module)]
-    (map (fn [resource]
-           (let [template? (contains? resource ::p/config)
-                 filename (::p/filename resource)
-                 filename-on-target (str base-path "/" filename)
-                 filename-on-source (if template?
-                                      (str sub-module "/" filename ".template")
-                                      (str sub-module "/" filename))
-                 config (if template?
-                          (::p/config resource)
-                          {})
-                 mode (cond
-                        (contains? resource ::p/mode) (::p/mode resource)
-                        (string/ends-with? filename ".sh") "700"
-                        ::p/default "600")
-                 content (selmer/render-file filename-on-source config)]
-             (do
-               (docker-exec default-container (str "mkdir -p " base-path) user)
-               (docker-create-file-in-container default-container filename-on-target content user)
-               (docker-chmod-file default-container filename-on-target mode user)
-               (docker-chown-file default-container filename-on-target user user)
-               (docker-chgrp-file default-container filename-on-target user user))))
-         files)))
+    (reduce (fn [x y] (and x y))
+      (map (fn [resource]
+             (let [template? (contains? resource ::p/config)
+                   filename (::p/filename resource)
+                   filename-on-target (str base-path "/" filename)
+                   filename-on-source (if template?
+                                        (str sub-module "/" filename ".template")
+                                        (str sub-module "/" filename))
+                   config (if template?
+                            (::p/config resource)
+                            {})
+                   mode (cond
+                          (contains? resource ::p/mode) (::p/mode resource)
+                          (string/ends-with? filename ".sh") "700"
+                          ::p/default "600")
+                   content (selmer/render-file filename-on-source config)]
+               (do
+                 (docker-exec default-container (str "mkdir -p " base-path) user)
+                 (docker-create-file-in-container default-container filename-on-target content user)
+                 (docker-chmod-file default-container filename-on-target mode user)
+                 (docker-chown-file default-container filename-on-target user user)
+                 (docker-chgrp-file default-container filename-on-target user user))))
+           files))))
 
 
 (defmethod p/copy-resources-to-user ::docker

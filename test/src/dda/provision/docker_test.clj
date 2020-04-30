@@ -23,16 +23,32 @@
 
 (instrument)
 
-(defn test_exec_script []
+
+(defn test-exec-script []
+  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
   (is (= true
         (sut/exec-script ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh"))))
 
 
-(defn test_copy-resources-to-user []
-  (is (= [true]
-        (sut/copy-resources-to-user ::sut2/docker "testuser" "modu" "should-copy" [{::sut/filename "aFile"}]))))
+(defn test-copy-resources-to-user-and-exec-as-user []
+  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (and
+    (is (= true
+          (sut/copy-resources-to-user ::sut2/docker "testuser" "modu" "should-copy" [{::sut/filename "aFile.sh"}])))
+    (is (= true
+          (sut/exec-as-user ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh")))))
+
+
+(defn test-copy-resources-to-tmp-and-exec-as-root []
+  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (and
+    (is (= true
+          (sut/copy-resources-to-tmp ::sut2/docker "modu" "should-copy" [{::sut/filename "aFile.sh"}])))
+    (is (= true
+          (sut/exec-as-root ::sut2/docker "modu" "should-copy" "aFile.sh")))))
 
 
 (defn testAll []
-  (test_exec_script)
-  (test_copy-resources-to-user))
+  (test-exec-script)
+  (test-copy-resources-to-user-and-exec-as-user)
+  (test-copy-resources-to-tmp-and-exec-as-root))
