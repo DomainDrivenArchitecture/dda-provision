@@ -15,6 +15,7 @@
   :deploy-repositories [["snapshots" :clojars]
                         ["releases" :clojars]]
   :profiles {:dev {:source-paths ["test/src"
+                                  "test-integration/src"
                                   "uberjar/src"]
                    :resource-paths ["test/resources"]
                    :dependencies

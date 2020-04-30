@@ -49,6 +49,7 @@
 
 
 (defn testAll []
-  (test-exec-script)
-  (test-copy-resources-to-user-and-exec-as-user)
-  (test-copy-resources-to-tmp-and-exec-as-root))
+  (and
+    (test-exec-script)
+    (test-copy-resources-to-user-and-exec-as-user)
+    (test-copy-resources-to-tmp-and-exec-as-root)))
