@@ -27,6 +27,7 @@
 (s/def ::log-message string?)
 
 (s/def ::filename string?)
+(s/def ::script-content string?)
 (s/def ::config map?)
 (s/def ::file (s/keys :req [::filename] :opt[::config]))
 (s/def ::files (s/coll-of ::file))
@@ -48,6 +49,22 @@
    filename ::filename]
   provisioner)
 (defmulti exec-as-user select-exec-as-user)
+
+(defn-spec select-exec-script keyword?
+  [provisioner ::provisioner
+   user ::user
+   content ::script-content]
+  provisioner)
+(defmulti exec-script select-exec-script)
+
+(defn-spec select-exec-script-file keyword?
+  [provisioner ::provisioner
+   user ::user
+   module ::module
+   sub-module ::sub-module
+   filename ::filename]
+  provisioner)
+(defmulti exec-script-file select-exec-script-file)
 
 (defn-spec select-copy-resources-to-tmp keyword?
   [provisioner ::provisioner
@@ -77,6 +94,7 @@
 
 (instrument `select-copy-resources-to-user)
 (instrument `select-exec-as-user)
+(instrument `select-exec-script)
 (instrument `select-copy-resources-to-tmp)
 (instrument `select-exec-as-root)
 (instrument `select-provision-log)

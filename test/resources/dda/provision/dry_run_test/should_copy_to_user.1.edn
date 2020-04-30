@@ -10,4 +10,4 @@
              :mode "700"
              :owner "user"
              :group "user"
-             :content "aFile"}]}
+             :dda.provision.dry-run/content "#!/bin/bash -v\necho \"echo from aFile.sh\"\n# cmts\necho \"again!\"\n"}]}

@@ -48,6 +48,20 @@
                            (::sut/sub-module input)
                            (::sut/filename input)))))
 
+(defdatatest should-execute-script [input expected]
+  (is (= expected
+         (sut/exec-script (::sut/provisioner input)
+                          (::sut/user input)
+                          (::sut/content input)))))
+
+(defdatatest should-execute-script-file [input expected]
+  (is (= expected
+         (sut/exec-script-file (::sut/provisioner input)
+                               (::sut/user input)
+                               (::sut/module input)
+                               (::sut/sub-module input)
+                               (::sut/filename input)))))
+
 (defdatatest should-copy-to-tmp [input expected]
   (is (= expected
          (sut/copy-resources-to-tmp (::sut/provisioner input)
