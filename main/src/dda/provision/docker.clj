@@ -64,7 +64,7 @@
 
 (defn format-result [result]
   (if (= 0 (:exit result))
-    (str "SUCCESS - out: " (escape-newline (:out result)))
+    (str "SUCCESS" (if (not (empty? (string/trim (:out result)))) (str "  - out: " (escape-newline (:out result))) ""))
     (str "FAILED  - err: " (:err result))))
 
 
