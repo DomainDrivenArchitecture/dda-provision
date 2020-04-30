@@ -109,13 +109,13 @@
                :files ::p/files)
   :ret ::copies)
 
-(defmethod p/exec-script ::dry-run
+(defmethod p/exec-script-file ::dry-run
   [provisioner user module sub-module filename]
   {::execution-directory
    (str "/home/" user "/resources/" module "/" sub-module)
    ::execution-user user
    ::filename filename})
-(s/fdef p/exec-script
+(s/fdef p/exec-script-file
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
                      :module ::p/module
@@ -153,7 +153,7 @@
 
 (instrument `p/copy-resources-to-user)
 (instrument `p/exec-as-user)
-(instrument `p/exec-script)
+(instrument `p/exec-script-file)
 (instrument `p/copy-resources-to-tmp)
 (instrument `p/exec-as-root)
 (instrument `p/provision-log)

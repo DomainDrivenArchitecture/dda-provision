@@ -27,7 +27,13 @@
 (defn test-exec-script []
   (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
   (is (= true
-        (sut/exec-script ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh"))))
+         (sut/exec-script ::sut2/docker "testuser" "pwd\necho '----'\nls"))))
+
+
+(defn test-exec-script-file []
+  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (is (= true
+         (sut/exec-script-file ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh"))))
 
 
 (defn test-copy-resources-to-user-and-exec-as-user []
@@ -51,5 +57,6 @@
 (defn testAll []
   (and
     (test-exec-script)
+    (test-exec-script-file)
     (test-copy-resources-to-user-and-exec-as-user)
     (test-copy-resources-to-tmp-and-exec-as-root)))

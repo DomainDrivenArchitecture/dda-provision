@@ -201,12 +201,12 @@
 ;
 
 
-(defmethod p/exec-script ::remote
+(defmethod p/exec-script-file ::remote
   [provisioner user module sub-module filename]
   (let [file-with-path (str sub-module "/" filename)]
     (exec-script-remote (slurp (.getFile (clojure.java.io/resource file-with-path))) user)))
 
-(s/fdef p/exec-script
+(s/fdef p/exec-script-file
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
                      :module ::p/module
@@ -241,7 +241,7 @@
 (defn demo []
   (do
     (dda.provision.remote/remote-exec-command "ls -al")
-    (dda.provision/exec-script ::remote "az" "modu" "should-copy" "aFile.sh")))
+    (dda.provision/exec-script-file ::remote "az" "modu" "should-copy" "aFile.sh")))
 
 ;or in repl try e.g.:
 ;(dda.provision/exec-script ::remote "az" "mod" "vsc" "vsc-prereq.sh")
