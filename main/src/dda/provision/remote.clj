@@ -20,10 +20,8 @@
      [orchestra.core :refer [defn-spec]]
      [dda.provision :as p]
      [selmer.parser :as selmer]
-     [clojure.java.shell :as shell]
      [clojure.pprint :as pp]
-     [dda.provision.execution.local :as exec]
-     [dda.provision.execution.docker :as dock])
+     [dda.provision.execution.local :as exec])
     (:use [clj-ssh.cli])
     (:import (javax.swing JPasswordField
                           JOptionPane)))
@@ -52,7 +50,7 @@
 (def default-gopass-path "zwa/vm-pw")
 
 
-(defn remote-settings [host user]
+(defn set-remote [host user]
   (reset! remote-host host)
   (reset! remote-user user))
 
@@ -66,7 +64,7 @@
 
 
 (defn pw-by-gopass [path]
-  (let [res (exec/sh-result (str "gopass " path))]
+  (let [res (exec/sh-result-nolog (str "gopass " path))]
     (if (= 0 (:exit res))
         (:out res)
         (throw  (Exception. (str "password not found in " path))))))
@@ -75,13 +73,7 @@
 (default-session-options {:strict-host-key-checking :no})
 
 
-(defn get-remote-pw []
-  (if (nil? remote-pw)
-    (reset! remote-pw (pw-by-gopass default-gopass-path))
-    @remote-pw))
-
-
-; ----------------- remote
+; ----------------- exec remote
 (defn remote-exec-command
   "executes a shell command remotely"
   [command & [user]]
@@ -100,7 +92,12 @@
       commands)))
 
 
-; ******************************************
+(defn remote-create-file-in-container
+  [file content & [user]]
+  (remote-exec-command (str "printf \"" content "\" > " file) user))
+
+
+; ******************** defmethods
 (defn-spec
   ^{:private true}
   copy-resources-to-path ::copies
@@ -126,13 +123,10 @@
                  content (selmer/render-file filename-on-source config)]
              (do
                (remote-exec-command (str "mkdir -p " base-path) user)
-               ;(docker-create-file-in-container default-container filename-on-target content user)
+               (remote-create-file-in-container filename-on-target content user)
                (remote-exec-command (str "chmod " mode " " filename-on-target) user)
                (remote-exec-command (str "chown " user " " filename-on-target) user)
                (remote-exec-command (str "chgrp " user " " filename-on-target) user))))
-               ;(docker-chmod-file filename-on-target mode user)
-               ;(docker-chown-file filename-on-target user user)
-               ;(docker-chgrp-file filename-on-target user user))))
          files)))
 
 (defmethod p/copy-resources-to-user ::remote
@@ -145,7 +139,9 @@
                :sub-module ::p/sub-module
                :files ::p/files)
   :ret ::copies)
-;
+
+
+; todo
 ;
 ;(defmethod p/exec-as-user ::remote
 ;  [provisioner user module sub-module filename]
@@ -186,6 +182,16 @@
 ;               :filename ::p/filename)
 ;  :ret ::exec)
 ;
+
+
+(defmethod p/exec-script ::remote
+  [provisioner user content]
+  (exec-script-remote content user))
+(s/fdef p/exec-script
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :content ::p/script-content)
+        :ret ::exec)
 
 
 (defmethod p/exec-script-file ::remote

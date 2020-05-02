@@ -19,9 +19,7 @@
     ;[clojure.spec.alpha :as s]
     [clojure.tools.logging :as log]
     ;[orchestra.core :refer [defn-spec]]
-    [dda.provision :as p]
-    [clojure.java.shell :as shell]
-    [clojure.pprint :as pp]))
+    [clojure.java.shell :as shell]))
 
 
 (defn escape-double-quote [text]
@@ -40,6 +38,12 @@
   (if (= 0 (:exit result))
     (str "SUCCESS" (if (not (empty? (string/trim (:out result)))) (str "  - out: " (escape-newline (:out result))) ""))
     (str "FAILED  - err: " (:err result))))
+
+
+(defn sh-result-nolog
+  "runs a shell command locally, returning result map with :exit :out and :err, not logging the result"
+  [command]
+  (shell/sh "sh" "-c" command))
 
 
 (defn sh-result
