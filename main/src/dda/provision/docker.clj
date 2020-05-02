@@ -18,8 +18,6 @@
      [clojure.string :as string]
      [clojure.spec.alpha :as s]
      [clojure.spec.test.alpha :refer [instrument]]
-     [clojure.tools.logging :as log]
-     [clojure.java.shell :as shell]
      [orchestra.core :refer [defn-spec]]
      [selmer.parser :as selmer]
      [dda.provision :as p])

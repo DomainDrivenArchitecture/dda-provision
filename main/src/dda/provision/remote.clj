@@ -129,6 +129,7 @@
                (remote-exec-command (str "chgrp " user " " filename-on-target) user))))
          files)))
 
+
 (defmethod p/copy-resources-to-user ::remote
   [provisioner user module sub-module files]
   (copy-resources-to-path user (str "/home/" user "/resources/" module) sub-module files))
@@ -139,6 +140,30 @@
                :sub-module ::p/sub-module
                :files ::p/files)
   :ret ::copies)
+
+
+(defmethod p/exec-script ::remote
+  [provisioner user content]
+  (exec-script-remote content user))
+(s/fdef p/exec-script
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :content ::p/script-content)
+        :ret ::exec)
+
+
+(defmethod p/exec-script-file ::remote
+  [provisioner user module sub-module filename]
+  (let [file-with-path (str sub-module "/" filename)]
+    (exec-script-remote (slurp (.getFile (clojure.java.io/resource file-with-path))) user)))
+
+(s/fdef p/exec-script-file
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :module ::p/module
+                     :sub-module ::p/sub-module
+                     :filename ::p/filename)
+        :ret ::exec)
 
 
 ; todo
@@ -184,30 +209,6 @@
 ;
 
 
-(defmethod p/exec-script ::remote
-  [provisioner user content]
-  (exec-script-remote content user))
-(s/fdef p/exec-script
-        :args (s/cat :provisioner ::p/provisioner
-                     :user ::p/user
-                     :content ::p/script-content)
-        :ret ::exec)
-
-
-(defmethod p/exec-script-file ::remote
-  [provisioner user module sub-module filename]
-  (let [file-with-path (str sub-module "/" filename)]
-    (exec-script-remote (slurp (.getFile (clojure.java.io/resource file-with-path))) user)))
-
-(s/fdef p/exec-script-file
-        :args (s/cat :provisioner ::p/provisioner
-                     :user ::p/user
-                     :module ::p/module
-                     :sub-module ::p/sub-module
-                     :filename ::p/filename)
-        :ret ::exec)
-
-
 (defmethod p/provision-log ::remote
   [provisioner module sub-module log-level log-message]
   {::p/module module
@@ -221,13 +222,3 @@
                :log-level ::p/log-level
                :log-message ::p/log-message)
   :ret ::log)
-
-
-; -------------------------------------
-(defn demo []
-  (do
-    (dda.provision.remote/remote-exec-command "ls -al")
-    (dda.provision/exec-script-file ::remote "az" "modu" "should-copy" "aFile.sh")))
-
-;or in repl try e.g.:
-;(dda.provision/exec-script ::remote "az" "mod" "vsc" "vsc-prereq.sh")

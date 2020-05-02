@@ -16,10 +16,7 @@
 (ns dda.provision.execution.docker
   (:require
     [clojure.string :as string]
-    ;[clojure.spec.alpha :as s]
     [clojure.tools.logging :as log]
-    ;[orchestra.core :refer [defn-spec]]
-    [dda.provision :as p]
     [clojure.java.shell :as shell]
     [clojure.pprint :as pp]))
 
@@ -27,7 +24,6 @@
 (def default-shell "sh")
 (def default-image "ubuntu_with_user")
 (def default-container "dda-provision-tests")
-(def default-ip "172.17.0.77")
 
 
 ; ----------------- local shell support
@@ -153,7 +149,7 @@
     (reduce (fn [x y] (and x y))
             (map (fn [command]
                    (docker-exec container command user))
-                       commands))))
+              commands))))
 
 
 (defn docker-copy-file-to-container

@@ -16,9 +16,7 @@
 (ns dda.provision.execution.local
   (:require
     [clojure.string :as string]
-    ;[clojure.spec.alpha :as s]
     [clojure.tools.logging :as log]
-    ;[orchestra.core :refer [defn-spec]]
     [clojure.java.shell :as shell]))
 
 
