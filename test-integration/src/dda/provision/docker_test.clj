@@ -19,7 +19,8 @@
    [clojure.spec.test.alpha :refer [instrument]]
    [data-test :refer :all]
    [dda.provision :as sut]
-   [dda.provision.docker :as sut2]))
+   [dda.provision.docker :as sut2]
+   [dda.provision.execution.docker :as sut3]))
 
 (instrument)
 
@@ -32,7 +33,7 @@
   ")
 
 (defn test-exec-script []
-  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (is (= true
          (sut/exec-script ::sut2/docker "testuser" testscript))))
 
@@ -45,19 +46,19 @@
   ")
 
 (defn test-exec-script-failing []
-  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (is (= false
          (sut/exec-script ::sut2/docker "testuser" failing-testscript))))
 
 
 (defn test-exec-script-file []
-  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (is (= true
          (sut/exec-script-file ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh"))))
 
 
 (defn test-copy-resources-to-user-and-exec-as-user []
-  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (and
     (is (= true
           (sut/copy-resources-to-user ::sut2/docker "testuser" "modu" "should-copy" [{::sut/filename "aFile.sh"}])))
@@ -66,7 +67,7 @@
 
 
 (defn test-copy-resources-to-tmp-and-exec-as-root []
-  (sut2/provide-container sut2/default-container :sut2/create-new-kill-esisting)
+  (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (and
     (is (= true
           (sut/copy-resources-to-tmp ::sut2/docker "modu" "should-copy" [{::sut/filename "aFile.sh"}])))
