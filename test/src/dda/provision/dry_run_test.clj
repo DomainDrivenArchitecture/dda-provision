@@ -56,11 +56,11 @@
 
 (defdatatest should-execute-script-file [input expected]
   (is (= expected
-         (sut/exec-script-file (:provisioner input)
-                               (:user input)
-                               (:module input)
-                               (:sub-module input)
-                               (:filename input)))))
+         (sut/exec-file-from-source-as-user (:provisioner input)
+                                            (:user input)
+                                            (:module input)
+                                            (:sub-module input)
+                                            (:filename input)))))
 
 (defdatatest should-copy-to-tmp [input expected]
   (is (= expected

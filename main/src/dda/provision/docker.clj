@@ -96,12 +96,12 @@
         :ret ::exec)
 
 
-(defmethod p/exec-script-file ::docker
+(defmethod p/exec-file-from-source-as-user ::docker
   [provisioner user module sub-module filename]
   (let [file-with-path (str sub-module "/" filename)]
     (provide-container default-container)
     (docker-exec-host-script default-container (slurp (.getFile (clojure.java.io/resource file-with-path))))))
-(s/fdef p/exec-script-file
+(s/fdef p/exec-file-from-source-as-user
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
                      :module ::p/module
@@ -150,7 +150,7 @@
 
 (instrument `p/copy-resources-to-user)
 (instrument `p/exec-as-user)
-(instrument `p/exec-script-file)
+(instrument `p/exec-file-from-source-as-user)
 (instrument `p/copy-resources-to-tmp)
 (instrument `p/exec-as-root)
 (instrument `p/provision-log)

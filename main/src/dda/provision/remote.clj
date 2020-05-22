@@ -135,12 +135,12 @@
         :ret ::exec)
 
 
-(defmethod p/exec-script-file ::remote
+(defmethod p/exec-file-from-source-as-user ::remote
   [provisioner user module sub-module filename]
   (let [file-with-path (str sub-module "/" filename)]
     (exec-script-remote (slurp (.getFile (clojure.java.io/resource file-with-path))) user)))
 
-(s/fdef p/exec-script-file
+(s/fdef p/exec-file-from-source-as-user
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
                      :module ::p/module

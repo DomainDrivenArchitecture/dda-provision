@@ -48,13 +48,13 @@
            [provisioner ::provisioner user ::user command ::command]
            provisioner)
 (defmulti exec-command-as-user
-          select-exec-script)
+          select-exec-command-as-user)
 
-(defn-spec select-exec-script-file keyword?
-  [provisioner ::provisioner user ::user module ::module sub-module ::sub-module filename ::filename]
-  provisioner)
-(defmulti exec-script-file 
-  select-exec-script-file)
+(defn-spec select-exec-file-from-source-as-user keyword?
+           [provisioner ::provisioner user ::user module ::module sub-module ::sub-module filename ::filename]
+           provisioner)
+(defmulti exec-file-from-source-as-user
+          select-exec-file-from-source-as-user)
 
 (defn-spec select-copy-resources-to-tmp keyword?
   [provisioner ::provisioner module ::module sub-module ::sub-module files ::files]

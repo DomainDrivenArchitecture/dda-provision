@@ -54,7 +54,7 @@
 (defn test-exec-script-file []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (is (= true
-         (sut/exec-script-file ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh"))))
+         (sut/exec-file-from-source-as-user ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh"))))
 
 
 (defn test-copy-resources-to-user-and-exec-as-user []
