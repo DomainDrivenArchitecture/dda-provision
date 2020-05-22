@@ -44,11 +44,11 @@
 (defmulti exec-as-user 
   select-exec-as-user)
 
-(defn-spec select-exec-script keyword?
-  [provisioner ::provisioner user ::user command ::command]
-  provisioner)
-(defmulti exec-script 
-  select-exec-script)
+(defn-spec select-exec-command-as-user keyword?
+           [provisioner ::provisioner user ::user command ::command]
+           provisioner)
+(defmulti exec-command-as-user
+          select-exec-script)
 
 (defn-spec select-exec-script-file keyword?
   [provisioner ::provisioner user ::user module ::module sub-module ::sub-module filename ::filename]

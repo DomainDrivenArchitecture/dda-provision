@@ -125,10 +125,10 @@
   :ret ::copies)
 
 
-(defmethod p/exec-script ::remote
+(defmethod p/exec-command-as-user ::remote
   [provisioner user content]
   (exec-script-remote content user))
-(s/fdef p/exec-script
+(s/fdef p/exec-command-as-user
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
                      :content ::p/command)

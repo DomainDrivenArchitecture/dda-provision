@@ -113,13 +113,12 @@
   :ret ::copies)
 
 
-;TODO rename to exec-command-as-user
-(defmethod p/exec-script ::dry-run
+(defmethod p/exec-command-as-user ::dry-run
   [provisioner user command]
   {:execution-directory (str "/home/" user)
    :execution-user user
    :command command})
-(s/fdef p/exec-script
+(s/fdef p/exec-command-as-user
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
                      :command ::p/command)

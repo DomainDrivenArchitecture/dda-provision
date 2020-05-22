@@ -50,9 +50,9 @@
 
 (defdatatest should-execute-script [input expected]
   (is (= expected
-         (sut/exec-script (:provisioner input)
-                          (:user input)
-                          (:content input)))))
+         (sut/exec-command-as-user (:provisioner input)
+                                   (:user input)
+                                   (:content input)))))
 
 (defdatatest should-execute-script-file [input expected]
   (is (= expected

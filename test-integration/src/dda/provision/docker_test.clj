@@ -35,7 +35,7 @@
 (defn test-exec-script []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (is (= true
-         (sut/exec-script ::sut2/docker "testuser" testscript))))
+         (sut/exec-command-as-user ::sut2/docker "testuser" testscript))))
 
 
 (def failing-testscript
@@ -48,7 +48,7 @@
 (defn test-exec-script-failing []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (is (= false
-         (sut/exec-script ::sut2/docker "testuser" failing-testscript))))
+         (sut/exec-command-as-user ::sut2/docker "testuser" failing-testscript))))
 
 
 (defn test-exec-script-file []

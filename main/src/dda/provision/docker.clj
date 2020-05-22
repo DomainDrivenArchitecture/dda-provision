@@ -85,11 +85,11 @@
   :ret ::exec)
 
 
-(defmethod p/exec-script ::docker
+(defmethod p/exec-command-as-user ::docker
   [provisioner user content]
   (provide-container default-container)
   (docker-exec-host-script default-container content user))
-(s/fdef p/exec-script
+(s/fdef p/exec-command-as-user
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
                      :content ::p/command)
