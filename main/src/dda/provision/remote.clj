@@ -26,23 +26,6 @@
     (:import (javax.swing JPasswordField
                           JOptionPane)))
 
-
-(s/def ::path string?)
-(s/def ::mode string?)
-(s/def ::owner string?)
-(s/def ::group string?)
-(s/def ::content string?)
-(s/def ::copy (s/keys :req [::path ::mode ::owner ::group ::content]))
-(s/def ::copies (s/coll-of ::copy))
-
-(s/def ::filename string?)
-(s/def ::execution-user string?)
-(s/def ::execution-directory string?)
-(s/def ::exec (s/keys :req [::execution-directory ::execution-user ::filename]))
-
-(s/def ::log (s/keys :req [::p/module ::p/sub-module ::p/log-level ::p/log-message]))
-
-
 ; ----------------- remote stuff
 (def remote-host "192.168.56.122")
 (def remote-user "az")
