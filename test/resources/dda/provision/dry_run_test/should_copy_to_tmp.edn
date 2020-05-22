@@ -1,10 +1,9 @@
 {:meta {:name "a plain data file test"}
- :input {:dda.provision/provisioner :dda.provision.dry-run/dry-run
-         :dda.provision/module "dda-provision"
-         :dda.provision/sub-module "should-copy"
-         :dda.provision/files [{:dda.provision/filename "aFile"}]}
- :expected [#:dda.provision.dry-run
-             {:path "/tmp/dda-provision/should-copy/aFile"
+ :input {:provisioner :dda.provision.dry-run/dry-run
+         :module "dda-provision"
+         :sub-module "should-copy"
+         :files [{:filename "aFile"}]}
+ :expected [{:path "/tmp/dda-provision/should-copy/aFile"
               :mode "600"
               :owner "root"
               :group "root"

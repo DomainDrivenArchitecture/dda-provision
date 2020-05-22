@@ -26,52 +26,52 @@
 (defdatatest should-print-plain [input expected]
   (is (= expected
          (load-required/dry-print
-          (sut/copy-resources-to-user (::sut/provisioner input)
-                                      (::sut/user input)
-                                      (::sut/module input)
-                                      (::sut/sub-module input)
-                                      (::sut/files input))))))
+          (sut/copy-resources-to-user (:provisioner input)
+                                      (:user input)
+                                      (:module input)
+                                      (:sub-module input)
+                                      (:files input))))))
 
 (defdatatest should-copy-to-user [input expected]
   (is (= expected
-         (sut/copy-resources-to-user (::sut/provisioner input)
-                                     (::sut/user input)
-                                     (::sut/module input)
-                                     (::sut/sub-module input)
-                                     (::sut/files input)))))
+         (sut/copy-resources-to-user (:provisioner input)
+                                     (:user input)
+                                     (:module input)
+                                     (:sub-module input)
+                                     (:files input)))))
 
 (defdatatest should-execute-for-user [input expected]
   (is (= expected
-         (sut/exec-as-user (::sut/provisioner input)
-                           (::sut/user input)
-                           (::sut/module input)
-                           (::sut/sub-module input)
-                           (::sut/filename input)))))
+         (sut/exec-as-user (:provisioner input)
+                           (:user input)
+                           (:module input)
+                           (:sub-module input)
+                           (:filename input)))))
 
 (defdatatest should-execute-script [input expected]
   (is (= expected
-         (sut/exec-script (::sut/provisioner input)
-                          (::sut/user input)
-                          (::sut/content input)))))
+         (sut/exec-script (:provisioner input)
+                          (:user input)
+                          (:content input)))))
 
 (defdatatest should-execute-script-file [input expected]
   (is (= expected
-         (sut/exec-script-file (::sut/provisioner input)
-                               (::sut/user input)
-                               (::sut/module input)
-                               (::sut/sub-module input)
-                               (::sut/filename input)))))
+         (sut/exec-script-file (:provisioner input)
+                               (:user input)
+                               (:module input)
+                               (:sub-module input)
+                               (:filename input)))))
 
 (defdatatest should-copy-to-tmp [input expected]
   (is (= expected
-         (sut/copy-resources-to-tmp (::sut/provisioner input)
-                                    (::sut/module input)
-                                    (::sut/sub-module input)
-                                    (::sut/files input)))))
+         (sut/copy-resources-to-tmp (:provisioner input)
+                                    (:module input)
+                                    (:sub-module input)
+                                    (:files input)))))
 
 (defdatatest should-execute-for-root [input expected]
   (is (= expected
-         (sut/exec-as-root (::sut/provisioner input)
-                           (::sut/module input)
-                           (::sut/sub-module input)
-                           (::sut/filename input)))))
+         (sut/exec-as-root (:provisioner input)
+                           (:module input)
+                           (:sub-module input)
+                           (:filename input)))))

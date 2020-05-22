@@ -27,15 +27,15 @@
 (s/def ::owner string?)
 (s/def ::group string?)
 (s/def ::content string?)
-(s/def ::copy (s/keys :req [::path ::mode ::owner ::group ::content]))
+(s/def ::copy (s/keys :req-un [::path ::mode ::owner ::group ::content]))
 (s/def ::copies (s/coll-of ::copy))
 
 (s/def ::filename string?)
 (s/def ::execution-user string?)
 (s/def ::execution-directory string?)
-(s/def ::exec (s/keys :req [::execution-directory ::execution-user ::filename]))
+(s/def ::exec (s/keys :req-un [::execution-directory ::execution-user ::filename]))
 
-(s/def ::log (s/keys :req [::p/module ::p/sub-module ::p/log-level ::p/log-message]))
+(s/def ::log (s/keys :req-un [::p/module ::p/sub-module ::p/log-level ::p/log-message]))
 
 (defn-spec dry-print string?
   [copies ::copies]
@@ -54,24 +54,24 @@
    files ::p/files]
   (let [base-path (str module-path "/" sub-module)]
     (map (fn [resource]
-           (let [template? (contains? resource ::p/config)
-                 filename (::p/filename resource)
+           (let [template? (contains? resource :config)
+                 filename (:filename resource)
                  filename-on-target (str base-path "/" filename)
                  filename-on-source (if template?
                                       (str sub-module "/" filename ".template")
                                       (str sub-module "/" filename))
                  config (if template?
-                          (::p/config resource)
+                          (:config resource)
                           {})
                  mode (cond
-                        (contains? resource ::p/mode) (::p/mode resource)
+                        (contains? resource :mode) (:mode resource)
                         (string/ends-with? filename ".sh") "700"
                         :default "600")]
-             {::path filename-on-target
-              ::group user
-              ::owner user
-              ::mode mode
-              ::content (selmer/render-file filename-on-source config)}))
+             {:path filename-on-target
+              :group user
+              :owner user
+              :mode mode
+              :content (selmer/render-file filename-on-source config)}))
          files)))
 
 (defmethod p/copy-resources-to-user ::dry-run 
@@ -87,10 +87,10 @@
 
 (defmethod p/exec-as-user ::dry-run
   [provisioner user module sub-module filename]
-  {::execution-directory
+  {:execution-directory
    (str "/home/" user "/resources/" module "/" sub-module)
-   ::execution-user user
-   ::filename filename})
+   :execution-user user
+   :filename filename})
 (s/fdef p/exec-as-user
   :args (s/cat :provisioner ::p/provisioner
                :user ::p/user
@@ -111,8 +111,8 @@
 
 (defmethod p/exec-script ::dry-run
   [provisioner user content]
-  {::execution-user user
-   ::content content})
+  {:execution-user user
+   :content content})
 (s/fdef p/exec-script-file
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
@@ -121,10 +121,10 @@
 
 (defmethod p/exec-script-file ::dry-run
   [provisioner user module sub-module filename]
-  {::execution-directory
+  {:execution-directory
    (str "/home/" user "/resources/" module "/" sub-module)
-   ::execution-user user
-   ::filename filename})
+   :execution-user user
+   :filename filename})
 (s/fdef p/exec-script-file
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
@@ -135,10 +135,10 @@
 
 (defmethod p/exec-as-root ::dry-run
   [provisioner module sub-module filename]
-  {::execution-directory
+  {:execution-directory
    (str "/tmp/" module "/" sub-module)
-   ::execution-user "root"
-   ::filename filename})
+   :execution-user "root"
+   :filename filename})
 (s/fdef p/exec-as-root
   :args (s/cat :provisioner ::p/provisioner
                :module ::p/module
@@ -148,10 +148,10 @@
 
 (defmethod p/provision-log ::dry-run
   [provisioner module sub-module log-level log-message]
-  {::p/module module
-   ::p/sub-module sub-module
-   ::p/log-level log-level
-   ::p/log-message log-message})
+  {:module module
+   :sub-module sub-module
+   :log-level log-level
+   :log-message log-message})
 (s/fdef p/provision-log
   :args (s/cat :provisioner ::p/provisioner
                :module ::p/module

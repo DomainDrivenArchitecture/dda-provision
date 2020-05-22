@@ -1,7 +1,7 @@
-{:input {:dda.provision/provisioner :dda.provision.dry-run/dry-run
-         :dda.provision/user "user"
-         :dda.provision/module "dda-provision"
-         :dda.provision/sub-module "should-copy-plain"
-         :dda.provision/files [{:dda.provision/filename "aFile"}]}
+{:input {:provisioner :dda.provision.dry-run/dry-run
+         :user "user"
+         :module "dda-provision"
+         :sub-module "should-copy-plain"
+         :files [{:filename "aFile"}]}
  :expected "copy files:
-#:dda.provision.dry-run{:path \"/home/user/resources/dda-provision/should-copy-plain/aFile\", :group \"user\", :owner \"user\", :mode \"600\", :content \"aFile\"}"}
+{:path \"/home/user/resources/dda-provision/should-copy-plain/aFile\", :group \"user\", :owner \"user\", :mode \"600\", :content \"aFile\"}"}

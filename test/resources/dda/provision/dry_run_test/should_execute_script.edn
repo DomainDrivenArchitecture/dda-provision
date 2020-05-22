@@ -1,6 +1,6 @@
 {:meta {:name "a plain data file test"}
- :input {:dda.provision/provisioner :dda.provision.dry-run/dry-run
-         :dda.provision/user "user"
-         :dda.provision/content "echo hi"}
- :expected {:dda.provision.dry-run/execution-user "user"
-            :dda.provision.dry-run/content "echo hi"}}
+ :input {:provisioner :dda.provision.dry-run/dry-run
+         :user "user"
+         :content "echo hi"}
+ :expected {:execution-user "user"
+            :content "echo hi"}}
