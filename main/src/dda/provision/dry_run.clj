@@ -33,9 +33,10 @@
 (s/def ::filename string?)
 (s/def ::execution-user string?)
 (s/def ::execution-directory string?)
-(s/def ::exec (s/keys :req-un [::execution-directory ::execution-user ::filename]))
+(s/def ::exec-file-from-target (s/keys :req-un [::execution-directory ::execution-user ::filename]))
 
 (s/def ::exec-file-from-source any?)
+(s/def ::exec-command any?)
 
 (s/def ::log (s/keys :req-un [::p/module ::p/sub-module ::p/log-level ::p/log-message]))
 
@@ -94,12 +95,12 @@
    :execution-user user
    :filename filename})
 (s/fdef p/exec-as-user
-  :args (s/cat :provisioner ::p/provisioner
-               :user ::p/user
-               :module ::p/module
-               :sub-module ::p/sub-module
-               :filename ::p/filename)
-  :ret ::exec)
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :module ::p/module
+                     :sub-module ::p/sub-module
+                     :filename ::p/filename)
+        :ret ::exec-file-from-target)
 
 (defmethod p/copy-resources-to-tmp ::dry-run
   [provisioner module sub-module files]
@@ -116,10 +117,10 @@
   {:execution-user user
    :content content})
 (s/fdef p/exec-script-file
-  :args (s/cat :provisioner ::p/provisioner
-               :user ::p/user
-               :content ::p/script-content)
-  :ret ::exec)
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :content ::p/script-content)
+        :ret ::exec-file-from-target)
 
 (defmethod p/exec-script-file ::dry-run
   [provisioner user module sub-module filename]
@@ -128,12 +129,12 @@
    :execution-user user
    :filename filename})
 (s/fdef p/exec-script-file
-  :args (s/cat :provisioner ::p/provisioner
-               :user ::p/user
-               :module ::p/module
-               :sub-module ::p/sub-module
-               :filename ::p/filename)
-  :ret ::exec)
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :module ::p/module
+                     :sub-module ::p/sub-module
+                     :filename ::p/filename)
+        :ret ::exec-file-from-target)
 
 (defmethod p/exec-as-root ::dry-run
   [provisioner module sub-module filename]
@@ -142,11 +143,11 @@
    :execution-user "root"
    :filename filename})
 (s/fdef p/exec-as-root
-  :args (s/cat :provisioner ::p/provisioner
-               :module ::p/module
-               :sub-module ::p/sub-module
-               :filename ::p/filename)
-  :ret ::exec)
+        :args (s/cat :provisioner ::p/provisioner
+                     :module ::p/module
+                     :sub-module ::p/sub-module
+                     :filename ::p/filename)
+        :ret ::exec-file-from-target)
 
 (defmethod p/provision-log ::dry-run
   [provisioner module sub-module log-level log-message]
