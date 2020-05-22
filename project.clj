@@ -1,4 +1,4 @@
-(defproject dda/dda-provision "0.1.1-SNAPSHOT"
+(defproject dda/dda-provision "0.2.0-SNAPSHOT"
   :description "tools for provisioning"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
