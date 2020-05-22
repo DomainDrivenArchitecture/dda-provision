@@ -27,7 +27,7 @@
 (s/def ::log-message string?)
 
 (s/def ::filename string?)
-(s/def ::script-content string?)
+(s/def ::command string?)
 (s/def ::config map?)
 (s/def ::file (s/keys :req-un [::filename] :opt-un [::config]))
 (s/def ::files (s/coll-of ::file))
@@ -45,7 +45,7 @@
   select-exec-as-user)
 
 (defn-spec select-exec-script keyword?
-  [provisioner ::provisioner user ::user content ::script-content]
+  [provisioner ::provisioner user ::user command ::command]
   provisioner)
 (defmulti exec-script 
   select-exec-script)

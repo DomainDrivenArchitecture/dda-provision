@@ -131,7 +131,7 @@
 (s/fdef p/exec-script
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
-                     :content ::p/script-content)
+                     :content ::p/command)
         :ret ::exec)
 
 

@@ -116,14 +116,14 @@
 ;TODO rename to exec-command-as-user
 (defmethod p/exec-script ::dry-run
   [provisioner user command]
-  {:execution-user user
-   :command command
-   :execution-directory (str "/home/" user)})
+  {:execution-directory (str "/home/" user)
+   :execution-user user
+   :command command})
 (s/fdef p/exec-script
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
-                     :command ::p/script-content)
-        :ret ::exec-file-from-target)
+                     :command ::p/command)
+        :ret ::exec-command)
 
 (defmethod p/exec-script-file ::dry-run
   [provisioner user module sub-module filename]
