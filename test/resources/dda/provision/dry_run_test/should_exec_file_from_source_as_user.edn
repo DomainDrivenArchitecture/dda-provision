@@ -4,7 +4,6 @@
          :module "dda-provision"
          :sub-module "should-execute"
          :filename "aFile"}
- :expected {:execution-directory
-            "/home/user/resources/dda-provision/should-execute"
+ :expected {:execution-directory "/home/user"
             :execution-user "user"
             :filename "aFile"}}

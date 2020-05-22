@@ -126,8 +126,7 @@
 
 (defmethod p/exec-file-from-source-as-user ::dry-run
   [provisioner user module sub-module filename]
-  {:execution-directory
-   (str "/home/" user "/resources/" module "/" sub-module)
+  {:execution-directory (str "/home/" user)
    :execution-user user
    :filename filename})
 (s/fdef p/exec-file-from-source-as-user
@@ -136,7 +135,7 @@
                      :module ::p/module
                      :sub-module ::p/sub-module
                      :filename ::p/filename)
-        :ret ::exec-file-from-target)
+        :ret ::exec-file-from-source)
 
 (defmethod p/exec-as-root ::dry-run
   [provisioner module sub-module filename]

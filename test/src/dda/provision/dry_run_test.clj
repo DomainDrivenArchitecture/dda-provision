@@ -54,7 +54,7 @@
                                               (:user input)
                                               (:command input)))))
 
-(defdatatest should-execute-script-file [input expected]
+(defdatatest should-exec-file-from-source-as-user [input expected]
   (is (= expected
          (sut/exec-file-from-source-as-user (:provisioner input)
                                             (:user input)
