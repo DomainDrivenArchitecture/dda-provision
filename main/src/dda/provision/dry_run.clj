@@ -33,10 +33,10 @@
 (s/def ::filename string?)
 (s/def ::execution-user string?)
 (s/def ::execution-directory string?)
+(s/def ::command string?)
 (s/def ::exec-file-from-target (s/keys :req-un [::execution-directory ::execution-user ::filename]))
-
-(s/def ::exec-file-from-source any?)
-(s/def ::exec-command any?)
+(s/def ::exec-file-from-source (s/keys :req-un [::execution-directory ::execution-user ::filename]))
+(s/def ::exec-command (s/keys :req-un [::execution-directory ::execution-user ::command]))
 
 (s/def ::log (s/keys :req-un [::p/module ::p/sub-module ::p/log-level ::p/log-message]))
 
@@ -112,14 +112,17 @@
                :files ::p/files)
   :ret ::copies)
 
+
+;TODO rename to exec-command-as-user
 (defmethod p/exec-script ::dry-run
-  [provisioner user content]
+  [provisioner user command]
   {:execution-user user
-   :content content})
-(s/fdef p/exec-script-file
+   :command command
+   :execution-directory (str "/home/" user)})
+(s/fdef p/exec-script
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
-                     :content ::p/script-content)
+                     :command ::p/script-content)
         :ret ::exec-file-from-target)
 
 (defmethod p/exec-script-file ::dry-run
