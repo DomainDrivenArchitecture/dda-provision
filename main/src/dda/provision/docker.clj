@@ -24,21 +24,18 @@
     (:use
       dda.provision.execution.docker))
 
-; ------------------ docker settings
 
 ; ************************* methods for dda-provision ::docker
-(defn-spec
-  ^{:private true}
-  copy-resources-to-path ::copies
-  [user ::p/user
-   module-path string?
-   sub-module ::p/sub-module
-   files ::p/files]
+(defn copy-resources-to-path
+  [user
+   module-path
+   sub-module
+   files]
   (let [base-path (str module-path "/" sub-module)]
     (reduce (fn [x y] (and x y))
       (map (fn [resource]
              (let [template? (contains? resource ::p/config)
-                   filename (::p/filename resource)
+                   filename (:filename resource)
                    filename-on-target (str base-path "/" filename)
                    filename-on-source (if template?
                                         (str sub-module "/" filename ".template")
@@ -68,8 +65,7 @@
                :user ::p/user
                :module ::p/module
                :sub-module ::p/sub-module
-               :files ::p/files)
-  :ret ::copies)
+               :files ::p/files))
 
 
 (defmethod p/exec-as-user ::docker
@@ -81,8 +77,7 @@
                :user ::p/user
                :module ::p/module
                :sub-module ::p/sub-module
-               :filename ::p/filename)
-  :ret ::exec)
+               :filename ::p/filename))
 
 
 (defmethod p/exec-command-as-user ::docker
@@ -92,8 +87,7 @@
 (s/fdef p/exec-command-as-user
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
-                     :content ::p/command)
-        :ret ::exec)
+                     :content ::p/command))
 
 
 (defmethod p/exec-file-from-source-as-user ::docker
@@ -106,8 +100,7 @@
                      :user ::p/user
                      :module ::p/module
                      :sub-module ::p/sub-module
-                     :filename ::p/filename)
-        :ret ::exec)
+                     :filename ::p/filename))
 
 
 (defmethod p/copy-resources-to-tmp ::docker
@@ -117,8 +110,7 @@
   :args (s/cat :provisioner ::p/provisioner
                :module ::p/module
                :sub-module ::p/sub-module
-               :files ::p/files)
-  :ret ::copies)
+               :files ::p/files))
 
 
 (defmethod p/exec-as-root ::docker
@@ -129,8 +121,7 @@
   :args (s/cat :provisioner ::p/provisioner
                :module ::p/module
                :sub-module ::p/sub-module
-               :filename ::p/filename)
-  :ret ::exec)
+               :filename ::p/filename))
 
 
 (defmethod p/provision-log ::docker
@@ -144,8 +135,7 @@
                :module ::p/module
                :sub-module ::p/log-level
                :log-level ::p/log-level
-               :log-message ::p/log-message)
-  :ret ::log)
+               :log-message ::p/log-message))
 
 
 (instrument `p/copy-resources-to-user)

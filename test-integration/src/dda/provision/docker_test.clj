@@ -61,7 +61,7 @@
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (and
     (is (= true
-          (sut/copy-resources-to-user ::sut2/docker "testuser" "modu" "should-copy" [{::sut/filename "aFile.sh"}])))
+          (sut/copy-resources-to-user ::sut2/docker "testuser" "modu" "should-copy" [{:filename "aFile.sh"}])))
     (is (= true
           (sut/exec-as-user ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh")))))
 
@@ -70,7 +70,7 @@
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-esisting)
   (and
     (is (= true
-          (sut/copy-resources-to-tmp ::sut2/docker "modu" "should-copy" [{::sut/filename "aFile.sh"}])))
+          (sut/copy-resources-to-tmp ::sut2/docker "modu" "should-copy" [{:filename "aFile.sh"}])))
     (is (= true
           (sut/exec-as-root ::sut2/docker "modu" "should-copy" "aFile.sh")))))
 
