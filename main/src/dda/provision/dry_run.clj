@@ -124,6 +124,16 @@
                      :command ::p/command)
         :ret ::exec-command)
 
+(defmethod p/exec-command-as-root ::dry-run
+  [provisioner command]
+  {:execution-directory "/root"
+   :execution-user "root"
+   :command command})
+(s/fdef p/exec-command-as-root
+        :args (s/cat :provisioner ::p/provisioner
+                     :command ::p/command)
+        :ret ::exec-command)
+
 (defmethod p/exec-file-from-source-as-user ::dry-run
   [provisioner user module sub-module filename]
   {:execution-directory (str "/home/" user)

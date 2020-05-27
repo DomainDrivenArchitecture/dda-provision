@@ -54,6 +54,11 @@
                                               (:user input)
                                               (:command input)))))
 
+(defdatatest should-exec-command-as-root [input expected]
+             (is (= expected
+                    (sut/exec-command-as-root (:provisioner input)
+                                              (:command input)))))
+
 (defdatatest should-exec-file-from-source-as-user [input expected]
   (is (= expected
          (sut/exec-file-from-source-as-user (:provisioner input)

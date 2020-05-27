@@ -73,7 +73,6 @@
 (defmulti exec-as-root
   select-exec-as-root)
 
-;TODO add execute command as root
 (defn-spec select-exec-command-as-root keyword?
   [provisioner ::provisioner command ::command]
   provisioner)
