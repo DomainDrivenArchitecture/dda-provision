@@ -32,12 +32,25 @@
 (s/def ::file (s/keys :req-un [::filename] :opt-un [::config]))
 (s/def ::files (s/coll-of ::file))
 
+
+;-----------------------------------------------------------
+;Copy stuff
 (defn-spec select-copy-resources-to-user keyword?
   [provisioner ::provisioner user ::user module ::module sub-module ::sub-module files ::files]
   provisioner)
 (defmulti copy-resources-to-user 
   select-copy-resources-to-user)
 
+(defn-spec select-copy-resources-to-tmp keyword?
+  [provisioner ::provisioner module ::module sub-module ::sub-module files ::files]
+  provisioner)
+(defmulti copy-resources-to-tmp
+  select-copy-resources-to-tmp)
+
+;-----------------------------------------------------------
+;execute as user
+
+;TODO rename to select-exec-script-as-user ???
 (defn-spec select-exec-as-user keyword?
   [provisioner ::provisioner user ::user module ::module sub-module ::sub-module filename ::filename] 
   provisioner)
@@ -50,23 +63,30 @@
 (defmulti exec-command-as-user
           select-exec-command-as-user)
 
+;-----------------------------------------------------------
+;execute as root
+
+;TODO rename to exec-script-as-root
+(defn-spec select-exec-as-root keyword?
+  [provisioner ::provisioner module ::module sub-module ::sub-module filename ::filename]
+  provisioner)
+(defmulti exec-as-root
+  select-exec-as-root)
+
+;TODO add execute command as root
+(defn-spec select-exec-command-as-root keyword?
+  [provisioner ::provisioner command ::command]
+  provisioner)
+(defmulti exec-command-as-root
+  select-exec-command-as-root)
+
+;-----------------------------------------------------------
 (defn-spec select-exec-file-from-source-as-user keyword?
            [provisioner ::provisioner user ::user module ::module sub-module ::sub-module filename ::filename]
            provisioner)
 (defmulti exec-file-from-source-as-user
           select-exec-file-from-source-as-user)
 
-(defn-spec select-copy-resources-to-tmp keyword?
-  [provisioner ::provisioner module ::module sub-module ::sub-module files ::files]
-  provisioner)
-(defmulti copy-resources-to-tmp 
-  select-copy-resources-to-tmp)
-
-(defn-spec select-exec-as-root keyword?
-  [provisioner ::provisioner module ::module sub-module ::sub-module filename ::filename]
-  provisioner)
-(defmulti exec-as-root 
-  select-exec-as-root)
 
 (defn-spec select-provision-log keyword?
   [provisioner ::provisioner module ::module sub-module ::sub-module log-level ::log-level log-mesage ::log-message]
@@ -74,6 +94,7 @@
 (defmulti provision-log 
   select-provision-log)
 
+;-----------------------------------------------------------
 
 (instrument `select-copy-resources-to-user)
 (instrument `select-exec-as-user)
