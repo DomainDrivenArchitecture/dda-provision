@@ -125,6 +125,18 @@
   :ret ::copies)
 
 
+(defmethod p/exec-as-user ::remote
+  [provisioner user module sub-module filename]
+  (let [execution-directory (str "/home/" user "/resources/" module "/" sub-module)]
+    (remote-exec-command (str "cd" execution-directory " && ./" filename))))
+(s/fdef p/exec-as-user
+  :args (s/cat :provisioner ::p/provisioner
+               :user ::p/user
+               :module ::p/module
+               :sub-module ::p/sub-module
+               :filename ::p/filename)
+  :ret ::exec)
+
 (defmethod p/exec-command-as-user ::remote
   [provisioner user content]
   (exec-script-remote content user))
@@ -134,6 +146,13 @@
                      :content ::p/command)
         :ret ::exec)
 
+(defmethod p/exec-command-as-root ::remote
+  [provisioner content]
+  (exec-script-remote content "root"))
+(s/fdef p/exec-command-as-root
+  :args (s/cat :provisioner ::p/provisioner
+               :content ::p/command)
+  :ret ::exec)
 
 (defmethod p/exec-file-from-source-as-user ::remote
   [provisioner user module sub-module filename]
@@ -151,18 +170,6 @@
 
 ; todo
 ;
-;(defmethod p/exec-as-user ::remote
-;  [provisioner user module sub-module filename]
-;  (let [execution-directory (str "/home/" user "/resources/" module "/" sub-module)]
-;    (remote-exec-command default-container (str "cd " execution-directory " && ./" filename))))
-;
-;(s/fdef p/exec-as-user
-;  :args (s/cat :provisioner ::p/provisioner
-;               :user ::p/user
-;               :module ::p/module
-;               :sub-module ::p/sub-module
-;               :filename ::p/filename)
-;  :ret ::exec)
 ;
 ;
 ;(defmethod p/copy-resources-to-tmp ::remote

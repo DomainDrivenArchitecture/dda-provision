@@ -176,8 +176,10 @@
 
 
 (instrument `p/copy-resources-to-user)
-(instrument `p/exec-as-user)
-(instrument `p/exec-file-from-source-as-user)
 (instrument `p/copy-resources-to-tmp)
+(instrument `p/exec-as-user)
+(instrument `p/exec-command-as-user)
 (instrument `p/exec-as-root)
+(instrument `p/exec-command-as-root)
+(instrument `p/exec-file-from-source-as-user)
 (instrument `p/provision-log)

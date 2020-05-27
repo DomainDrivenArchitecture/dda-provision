@@ -123,6 +123,13 @@
                :sub-module ::p/sub-module
                :filename ::p/filename))
 
+(defmethod p/exec-command-as-root ::docker
+  [provisioner content]
+  (provide-container default-container)
+  (docker-exec-host-script default-container content "root"))
+(s/fdef p/exec-command-as-user
+  :args (s/cat :provisioner ::p/provisioner
+               :content ::p/command))
 
 (defmethod p/provision-log ::docker
   [provisioner module sub-module log-level log-message]
@@ -139,8 +146,10 @@
 
 
 (instrument `p/copy-resources-to-user)
-(instrument `p/exec-as-user)
-(instrument `p/exec-file-from-source-as-user)
 (instrument `p/copy-resources-to-tmp)
+(instrument `p/exec-as-user)
+(instrument `p/exec-command-as-user)
 (instrument `p/exec-as-root)
+(instrument `p/exec-command-as-root)
+(instrument `p/exec-file-from-source-as-user)
 (instrument `p/provision-log)
