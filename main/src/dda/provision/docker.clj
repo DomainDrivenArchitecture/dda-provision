@@ -127,7 +127,7 @@
   [provisioner content]
   (provide-container default-container)
   (docker-exec-host-script default-container content "root"))
-(s/fdef p/exec-command-as-user
+(s/fdef p/exec-command-as-root
   :args (s/cat :provisioner ::p/provisioner
                :content ::p/command))
 
