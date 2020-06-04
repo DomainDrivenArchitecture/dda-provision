@@ -56,9 +56,11 @@
 
 
 (defn sh
-  "runs shell command locally, returning true or false for success resp. failure"
+  "runs shell command locally, throws exception in case of failure"
   [command]
-  (= 0 (:exit (sh-result command))))
+  (let [result (sh-result command)]
+    (if (not= 0 (:exit result))
+      (throw (Exception. (str "CMD FAILED (" command ") -- (REASON: " (:err result) ")"))))))
 
 
 (defn split-script

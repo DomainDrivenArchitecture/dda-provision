@@ -34,8 +34,8 @@
 
 (defn test-exec-script []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-existing)
-  (is (= true
-         (sut/exec-command-as-user ::sut2/docker "testuser" testscript))))
+  (is (= nil
+        (sut/exec-command-as-user ::sut2/docker "testuser" testscript))))
 
 
 (def failing-testscript
@@ -47,31 +47,32 @@
 
 (defn test-exec-script-failing []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-existing)
-  (is (= false
-         (sut/exec-command-as-user ::sut2/docker "testuser" failing-testscript))))
+  (try
+    (sut/exec-command-as-user ::sut2/docker "testuser" failing-testscript)
+    (catch Exception e true)))
 
 
 (defn test-exec-script-file []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-existing)
-  (is (= true
+  (is (= nil
          (sut/exec-file-from-source-as-user ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh"))))
 
 
 (defn test-copy-resources-to-user-and-exec-as-user []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-eisting)
   (and
-    (is (= true
+    (is (= nil
           (sut/copy-resources-to-user ::sut2/docker "testuser" "modu" "should-copy" [{:filename "aFile.sh"}])))
-    (is (= true
+    (is (= nil
           (sut/exec-as-user ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh")))))
 
 
 (defn test-copy-resources-to-tmp-and-exec-as-root []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-existing)
   (and
-    (is (= true
+    (is (= nil
           (sut/copy-resources-to-tmp ::sut2/docker "modu" "should-copy" [{:filename "aFile.sh"}])))
-    (is (= true
+    (is (= nil
           (sut/exec-as-root ::sut2/docker "modu" "should-copy" "aFile.sh")))))
 
 
