@@ -103,6 +103,18 @@
                      :filename ::p/filename))
 
 
+(defmethod p/exec-file-from-source-as-root ::docker
+  [provisioner module sub-module filename]
+  (let [file-with-path (str sub-module "/" filename)]
+    (provide-container default-container)
+    (docker-exec-host-script default-container (slurp (.getFile (clojure.java.io/resource file-with-path))) "root")))
+(s/fdef p/exec-file-from-source-as-root
+        :args (s/cat :provisioner ::p/provisioner
+                     :module ::p/module
+                     :sub-module ::p/sub-module
+                     :filename ::p/filename))
+
+
 (defmethod p/copy-resources-to-tmp ::docker
   [provisioner module sub-module files]
   (copy-resources-to-path "root" (str "/tmp/" module) sub-module files))
@@ -147,9 +159,13 @@
 
 (instrument `p/copy-resources-to-user)
 (instrument `p/copy-resources-to-tmp)
+
 (instrument `p/exec-file-on-target-as-user)
 (instrument `p/exec-command-as-user)
+(instrument `p/exec-file-from-source-as-user)
+
 (instrument `p/exec-file-on-target-as-root)
 (instrument `p/exec-command-as-root)
-(instrument `p/exec-file-from-source-as-user)
+(instrument `p/exec-file-from-source-as-root)
+
 (instrument `p/provision-log)

@@ -99,7 +99,7 @@
 
 (instrument `select-exec-file-on-target-as-user)
 (instrument `select-exec-command-as-user)
-(instrument `select-exec-file-from-source-as-root)
+(instrument `select-exec-file-from-source-as-user)
 
 (instrument `select-exec-file-on-target-as-root)
 (instrument `select-exec-command-as-root)
