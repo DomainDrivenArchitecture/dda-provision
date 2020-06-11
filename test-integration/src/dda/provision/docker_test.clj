@@ -46,6 +46,12 @@
          (sut/exec-command-as-user ::sut2/docker "testuser" testscript))))
 
 
+(defn test-exec-command-as-root []
+  (sut3/provide-container sut3/default-container :sut2/create-new-kill-existing)
+  (is (= nil
+         (sut/exec-command-as-root ::sut2/docker testscript))))
+
+
 (defn test-copy-resources-to-user-and-exec-as-user []
   (sut3/provide-container sut3/default-container :sut2/create-new-kill-eisting)
   (and
@@ -86,6 +92,7 @@
 (defn testAll []
   (and
     (test-exec-command-as-user)
+    (test-exec-command-as-root)
     (test-exec-command-as-user-failing)
     (test-exec-file-from-source-as-user)
     (test-exec-file-from-source-as-root)
