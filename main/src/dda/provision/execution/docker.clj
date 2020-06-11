@@ -129,12 +129,16 @@
     (provide-image image)
     (if (= option :create-new-kill-existing)
       (do
-        (stop-and-rm-container container)
+        (try
+          (stop-and-rm-container container)
+          (catch Exception e true))
         (run-container container image))
       (if (= option :use-existing-else-create)
         (if (not (running? container))
           (do
-            (stop-and-rm-container container)
+            (try
+              (stop-and-rm-container container)
+              (catch Exception e true))
             (run-container container image)))))))
 
 
