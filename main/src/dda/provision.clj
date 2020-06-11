@@ -49,12 +49,11 @@
 
 ;-----------------------------------------------------------
 ;execute as user
-;TODO rename to select-exec-file-as-user ???
-(defn-spec select-exec-as-user keyword?
-  [provisioner ::provisioner user ::user module ::module sub-module ::sub-module filename ::filename] 
-  provisioner)
-(defmulti exec-as-user 
-  select-exec-as-user)
+(defn-spec select-exec-file-on-target-as-user keyword?
+           [provisioner ::provisioner user ::user module ::module sub-module ::sub-module filename ::filename]
+           provisioner)
+(defmulti exec-file-on-target-as-user
+          select-exec-file-on-target-as-user)
 
 (defn-spec select-exec-command-as-user keyword?
   [provisioner ::provisioner user ::user command ::command]
@@ -70,12 +69,11 @@
 
 ;-----------------------------------------------------------
 ;execute as root
-;TODO rename to rename to select-exec-file-as-root ???
-(defn-spec select-exec-as-root keyword?
+(defn-spec select-exec-file-on-target-as-root keyword?
   [provisioner ::provisioner module ::module sub-module ::sub-module filename ::filename]
   provisioner)
-(defmulti exec-as-root
-  select-exec-as-root)
+(defmulti exec-file-on-target-as-root
+          select-exec-file-on-target-as-root)
 
 (defn-spec select-exec-command-as-root keyword?
   [provisioner ::provisioner command ::command]

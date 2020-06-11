@@ -68,16 +68,16 @@
                :files ::p/files))
 
 
-(defmethod p/exec-as-user ::docker
+(defmethod p/exec-file-on-target-as-user ::docker
   [provisioner user module sub-module filename]
   (let [execution-directory (str "/home/" user "/resources/" module "/" sub-module)]
     (docker-exec default-container (str "cd " execution-directory " && ./" filename))))
-(s/fdef p/exec-as-user
-  :args (s/cat :provisioner ::p/provisioner
-               :user ::p/user
-               :module ::p/module
-               :sub-module ::p/sub-module
-               :filename ::p/filename))
+(s/fdef p/exec-file-on-target-as-user
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :module ::p/module
+                     :sub-module ::p/sub-module
+                     :filename ::p/filename))
 
 
 (defmethod p/exec-command-as-user ::docker
@@ -113,15 +113,15 @@
                :files ::p/files))
 
 
-(defmethod p/exec-as-root ::docker
+(defmethod p/exec-file-on-target-as-root ::docker
   [provisioner module sub-module filename]
   (let [execution-directory (str "/tmp/" module "/" sub-module)]
     (docker-exec default-container (str "cd " execution-directory " && ./" filename) "root")))
-(s/fdef p/exec-as-root
-  :args (s/cat :provisioner ::p/provisioner
-               :module ::p/module
-               :sub-module ::p/sub-module
-               :filename ::p/filename))
+(s/fdef p/exec-file-on-target-as-root
+        :args (s/cat :provisioner ::p/provisioner
+                     :module ::p/module
+                     :sub-module ::p/sub-module
+                     :filename ::p/filename))
 
 (defmethod p/exec-command-as-root ::docker
   [provisioner content]
@@ -147,9 +147,9 @@
 
 (instrument `p/copy-resources-to-user)
 (instrument `p/copy-resources-to-tmp)
-(instrument `p/exec-as-user)
+(instrument `p/exec-file-on-target-as-user)
 (instrument `p/exec-command-as-user)
-(instrument `p/exec-as-root)
+(instrument `p/exec-file-on-target-as-root)
 (instrument `p/exec-command-as-root)
 (instrument `p/exec-file-from-source-as-user)
 (instrument `p/provision-log)

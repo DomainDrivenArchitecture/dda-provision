@@ -64,7 +64,7 @@
     (is (= nil
           (sut/copy-resources-to-user ::sut2/docker "testuser" "modu" "should-copy" [{:filename "aFile.sh"}])))
     (is (= nil
-          (sut/exec-as-user ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh")))))
+           (sut/exec-file-on-target-as-user ::sut2/docker "testuser" "modu" "should-copy" "aFile.sh")))))
 
 
 (defn test-copy-resources-to-tmp-and-exec-as-root []
@@ -73,7 +73,7 @@
     (is (= nil
           (sut/copy-resources-to-tmp ::sut2/docker "modu" "should-copy" [{:filename "aFile.sh"}])))
     (is (= nil
-          (sut/exec-as-root ::sut2/docker "modu" "should-copy" "aFile.sh")))))
+           (sut/exec-file-on-target-as-root ::sut2/docker "modu" "should-copy" "aFile.sh")))))
 
 
 (defn testAll []

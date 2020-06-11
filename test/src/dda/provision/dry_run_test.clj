@@ -42,11 +42,11 @@
 
 (defdatatest should-execute-for-user [input expected]
   (is (= expected
-         (sut/exec-as-user (:provisioner input)
-                           (:user input)
-                           (:module input)
-                           (:sub-module input)
-                           (:filename input)))))
+         (sut/exec-file-on-target-as-user (:provisioner input)
+                                          (:user input)
+                                          (:module input)
+                                          (:sub-module input)
+                                          (:filename input)))))
 
 (defdatatest should-exec-command-as-user [input expected]
              (is (= expected
@@ -76,7 +76,7 @@
 
 (defdatatest should-execute-for-root [input expected]
   (is (= expected
-         (sut/exec-as-root (:provisioner input)
-                           (:module input)
-                           (:sub-module input)
-                           (:filename input)))))
+         (sut/exec-file-on-target-as-root (:provisioner input)
+                                          (:module input)
+                                          (:sub-module input)
+                                          (:filename input)))))

@@ -88,13 +88,13 @@
                :files ::p/files)
   :ret ::copies)
 
-(defmethod p/exec-as-user ::dry-run
+(defmethod p/exec-file-on-target-as-user ::dry-run
   [provisioner user module sub-module filename]
   {:execution-directory
    (str "/home/" user "/resources/" module "/" sub-module)
    :execution-user user
    :filename filename})
-(s/fdef p/exec-as-user
+(s/fdef p/exec-file-on-target-as-user
         :args (s/cat :provisioner ::p/provisioner
                      :user ::p/user
                      :module ::p/module
@@ -147,13 +147,13 @@
                      :filename ::p/filename)
         :ret ::exec-file-from-source)
 
-(defmethod p/exec-as-root ::dry-run
+(defmethod p/exec-file-on-target-as-root ::dry-run
   [provisioner module sub-module filename]
   {:execution-directory
    (str "/tmp/" module "/" sub-module)
    :execution-user "root"
    :filename filename})
-(s/fdef p/exec-as-root
+(s/fdef p/exec-file-on-target-as-root
         :args (s/cat :provisioner ::p/provisioner
                      :module ::p/module
                      :sub-module ::p/sub-module
@@ -177,9 +177,9 @@
 
 (instrument `p/copy-resources-to-user)
 (instrument `p/copy-resources-to-tmp)
-(instrument `p/exec-as-user)
+(instrument `p/exec-file-on-target-as-user)
 (instrument `p/exec-command-as-user)
-(instrument `p/exec-as-root)
+(instrument `p/exec-file-on-target-as-root)
 (instrument `p/exec-command-as-root)
 (instrument `p/exec-file-from-source-as-user)
 (instrument `p/provision-log)

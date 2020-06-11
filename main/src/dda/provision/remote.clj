@@ -125,17 +125,17 @@
   :ret ::copies)
 
 
-(defmethod p/exec-as-user ::remote
+(defmethod p/exec-file-on-target-as-user ::remote
   [provisioner user module sub-module filename]
   (let [execution-directory (str "/home/" user "/resources/" module "/" sub-module)]
     (remote-exec-command (str "cd" execution-directory " && ./" filename))))
-(s/fdef p/exec-as-user
-  :args (s/cat :provisioner ::p/provisioner
-               :user ::p/user
-               :module ::p/module
-               :sub-module ::p/sub-module
-               :filename ::p/filename)
-  :ret ::exec)
+(s/fdef p/exec-file-on-target-as-user
+        :args (s/cat :provisioner ::p/provisioner
+                     :user ::p/user
+                     :module ::p/module
+                     :sub-module ::p/sub-module
+                     :filename ::p/filename)
+        :ret ::exec)
 
 (defmethod p/exec-command-as-user ::remote
   [provisioner user content]
